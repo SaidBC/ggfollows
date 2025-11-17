@@ -11,15 +11,14 @@ export default function MainNav({ className }: { className?: string }) {
         <PublicNavLinks />
         <li>
           {/* <AuthButtons /> */}
-          <li>
-            <Button
-              className={`font-bold font-kablammo`}
-              variant={"secondary"}
-              asChild
-            >
-              <Link href="/dashboard">GO TO Dashoboard</Link>
-            </Button>
-          </li>
+
+          <Button
+            className={`font-bold font-kablammo`}
+            variant={"secondary"}
+            asChild
+          >
+            <Link href="/dashboard">GO TO Dashoboard</Link>
+          </Button>
         </li>
       </ul>
     </nav>
