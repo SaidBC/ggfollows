@@ -10,7 +10,16 @@ export default function MainNav({ className }: { className?: string }) {
       <ul className="flex items-center gap-8 text-lg font-bold">
         <PublicNavLinks />
         <li>
-          <AuthButtons />
+          {/* <AuthButtons /> */}
+          <li>
+            <Button
+              className={`font-bold font-kablammo`}
+              variant={"secondary"}
+              asChild
+            >
+              <Link href="/dashboard">GO TO Dashoboard</Link>
+            </Button>
+          </li>
         </li>
       </ul>
     </nav>

@@ -37,7 +37,16 @@ export default function MobileNav({ className }: { className?: string }) {
             <PublicNavLinks />
             <Separator />
             <li>
-              <AuthButtons />
+              {/* <AuthButtons /> */}
+              <li>
+                <Button
+                  className={`font-bold font-kablammo`}
+                  variant={"secondary"}
+                  asChild
+                >
+                  <Link href="/dashboard">GO TO Dashoboard</Link>
+                </Button>
+              </li>
             </li>
           </ul>
         </nav>
