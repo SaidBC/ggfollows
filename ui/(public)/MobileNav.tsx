@@ -14,8 +14,11 @@ import Link from "next/link";
 import { useState } from "react";
 import PublicNavLinks from "./PublicNavLinks";
 import AuthButtons from "./AuthButtons";
+import { useSession } from "next-auth/react";
 
 export default function MobileNav({ className }: { className?: string }) {
+  const session = useSession();
+
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -37,15 +40,17 @@ export default function MobileNav({ className }: { className?: string }) {
             <PublicNavLinks />
             <Separator />
             <li>
-              {/* <AuthButtons /> */}
-
-              <Button
-                className={`font-bold font-kablammo`}
-                variant={"secondary"}
-                asChild
-              >
-                <Link href="/dashboard">GO TO Dashoboard</Link>
-              </Button>
+              {session.status === "unauthenticated" ? (
+                <AuthButtons />
+              ) : (
+                <Button
+                  className={`font-bold font-kablammo`}
+                  variant={"secondary"}
+                  asChild
+                >
+                  <Link href="/dashboard">GO TO Dashoboard</Link>
+                </Button>
+              )}
             </li>
           </ul>
         </nav>

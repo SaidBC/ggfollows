@@ -2,24 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import signUpApiSchema from "@/lib/schemas/signUpApiSchema";
-import z from "zod";
+import validateData from "@/utils/validateDate";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-
-    const validatedData = signUpApiSchema.safeParse(body);
-
-    if (!validatedData.success)
-      return NextResponse.json(
-        {
-          success: false,
-          errors: z.flattenError(validatedData.error),
-        },
-        { status: 400 }
-      );
-
+    const validatedData = await validateData(req, signUpApiSchema);
+    if (!validatedData.isSuccess) return validatedData.response;
     const { email, username, password } = validatedData.data;
+
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ email }, { username }],
@@ -36,10 +26,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         ...validatedData.data,
@@ -56,10 +44,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(
-      { message: "User registered successfully", user },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, data: user }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {

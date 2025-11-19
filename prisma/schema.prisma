@@ -54,6 +54,33 @@ model User {
   accounts          Account[]
   sessions          Session[]
   verificationCodes VerificationCode[]
+  points            Int                @default(0)
+  pointTransactions PointTransaction[]
+}
+
+enum TransactionType {
+  EARN
+  SPEND
+}
+
+enum TransactionSource {
+  SIGNUP_BONUS
+  DAILY_REWARD
+  TASK_ACTION // if user create follow task or done a other users follow task
+  COMPLETE_TASK // if the website makes a tasks and missions rewards etc
+  PURCHASE
+  ADMIN_ADJUST
+  REFERRAL_BONUS
+}
+
+model PointTransaction {
+  id        String            @id @default(cuid())
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  amount    Int
+  type      TransactionType
+  source    TransactionSource
+  createdAt DateTime          @default(now())
 }
 
 model VerificationCode {
