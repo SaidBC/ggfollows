@@ -17,11 +17,18 @@ import SidebarNavLinks from "./SidebarNavLinks";
 import Link from "next/link";
 import { IconSettings } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/hooks/useUser";
 
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const privateSidebarNavLinks = siteConfig.privateSidebarNavLinks;
+  const { data, isLoading, error } = useUser();
+
+  if (error) return <p>Error loading user</p>;
+  if (!isLoading && (!data || !data.success)) return <p>Error loading user</p>;
+  const user = data ? (data.success ? data.data : null) : null;
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="flex flex-col gap-2">
@@ -30,12 +37,13 @@ export default function AppSidebar({
         </div>
         <Separator />
         <ProfileView
-          firstname="said"
-          lastname="rezzouq"
-          username="roger1234"
-          email="email@gamil.com"
+          firstname={user?.firstname || "g"}
+          lastname={user?.lastname || "g"}
+          username={user?.username || "ggfollows"}
+          email={user?.email || "gg.mail.com"}
+          isLoading={isLoading}
         />
-        <PointsView amount={0} />
+        <PointsView amount={user?.points || 0} isLoading={isLoading} />
         <Separator />
       </SidebarHeader>
       <SidebarContent className="px-2">

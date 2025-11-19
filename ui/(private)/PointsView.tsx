@@ -1,9 +1,16 @@
 "use client";
 
 import { useSidebar } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import PointsIcon from "@/components/vectors/PointIcon";
 
-export default function PointsView({ amount }: { amount: number }) {
+export default function PointsView({
+  amount,
+  isLoading,
+}: {
+  amount: number;
+  isLoading: boolean;
+}) {
   const { open } = useSidebar();
   return (
     <div className="flex items-center gap-4 bg-sidebar-accent p-2 rounded-md">
@@ -12,9 +19,13 @@ export default function PointsView({ amount }: { amount: number }) {
       </div>
 
       {open && (
-        <span>
-          Points amount :{" "}
-          <span className="text-secondary font-bold">{amount}</span>
+        <span className="flex items-center gap-2">
+          <span>Points amount : </span>
+          {!isLoading ? (
+            <span className="text-secondary font-bold">{amount}</span>
+          ) : (
+            <Skeleton className="w-6 h-4 bg-secondary" />
+          )}
         </span>
       )}
     </div>

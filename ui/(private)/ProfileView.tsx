@@ -3,6 +3,7 @@ import Image from "next/image";
 import EmailHidder from "./EmailHidder";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfileView({
   firstname,
@@ -10,12 +11,14 @@ export default function ProfileView({
   username,
   profileImageUrl,
   email,
+  isLoading,
 }: {
   firstname: string;
   lastname: string;
   username: string;
   profileImageUrl?: string;
   email?: string;
+  isLoading: boolean;
 }) {
   const { open } = useSidebar();
   return (
@@ -25,32 +28,49 @@ export default function ProfileView({
         open ? "p-2" : "p-1"
       )}
     >
-      <div>
-        {profileImageUrl ? (
-          <Image src={profileImageUrl} alt={username + "'s profile image"} />
-        ) : (
-          <div
-            className={cn(
-              "rounded-full bg-secondary text-secondary-foreground  flex items-center justify-center uppercase font-bold",
-              open ? "text-lg h-10 w-10" : "text-xs h-6 w-6"
-            )}
-          >
-            {firstname.charAt(0)}
-            {lastname.charAt(0)}
-          </div>
-        )}
-      </div>
-      {open && (
-        <div className="flex flex-col">
-          <span>@{username}</span>
-          {email && (
-            <EmailHidder
-              className="text-muted-foreground text-sm"
-              email={email}
-            />
+      {!isLoading ? (
+        <div>
+          {profileImageUrl ? (
+            <Image src={profileImageUrl} alt={username + "'s profile image"} />
+          ) : (
+            <div
+              className={cn(
+                "rounded-full bg-secondary text-secondary-foreground  flex items-center justify-center uppercase font-bold",
+                open ? "text-lg h-10 w-10" : "text-xs h-6 w-6"
+              )}
+            >
+              {firstname.charAt(0)}
+              {lastname.charAt(0)}
+            </div>
           )}
         </div>
+      ) : (
+        <div>
+          <Skeleton
+            className={cn(
+              "rounded-full bg-muted-foreground",
+              open ? "text-lg h-10 w-10" : "text-xs h-6 w-6"
+            )}
+          />
+        </div>
       )}
+      {open &&
+        (!isLoading ? (
+          <div className="flex flex-col">
+            <span>@{username}</span>
+            {email && (
+              <EmailHidder
+                className="text-muted-foreground text-sm"
+                email={email}
+              />
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <Skeleton className="w-32 h-2 bg-muted-foreground" />
+            <Skeleton className="w-32 h-2 bg-muted-foreground" />
+          </div>
+        ))}
     </div>
   );
 }
