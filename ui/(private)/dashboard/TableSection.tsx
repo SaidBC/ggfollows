@@ -91,6 +91,7 @@ export default function TableSection({}: TableSectionProps) {
       {transactions && transactions.length === 0 && (
         <div className=" ">
           <EmptyListMessage
+            className="@xl/main:flex-row @xl/main:text-left"
             title="Your transaction history is empty"
             description="Start claiming rewards to track your earned points."
           />

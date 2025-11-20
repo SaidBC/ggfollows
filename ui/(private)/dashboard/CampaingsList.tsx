@@ -81,6 +81,7 @@ export default function CampaignList() {
       {campaigns.length === 0 && (
         <div className="self-center">
           <EmptyListMessage
+            className="@xl/main:flex-row @xl/main:text-left"
             title="No campaigns available right now"
             description="New reward campaigns will appear here once they’re released."
           />

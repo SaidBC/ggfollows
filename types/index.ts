@@ -55,3 +55,10 @@ export type GetCampaignsResponse =
 export type GetTransactionsResponse =
   | ResponseSuccess<PointTransaction[]>
   | FieldsErrorResponse;
+
+export type ClaimDailyRewardResponse =
+  | ResponseSuccess<{
+      message: string;
+      balance: number;
+    }>
+  | FieldsErrorResponse;

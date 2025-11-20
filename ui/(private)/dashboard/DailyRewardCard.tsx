@@ -1,3 +1,6 @@
+"use client";
+
+import ErrorText from "@/components/ErrorText";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,12 +12,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import PointsIcon from "@/components/vectors/PointIcon";
+import { useClaimDailyReward } from "@/hooks/useClaimDailyReward";
 import { useDailyReward } from "@/hooks/useDailyRewardStatus";
 
 export default function DailyRewardCard() {
   const { data, error } = useDailyReward();
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
+  const {
+    mutate,
+    isPending,
+    isSuccess,
+    error: claimError,
+  } = useClaimDailyReward();
   return (
     <Card>
       <CardHeader>
@@ -25,8 +35,14 @@ export default function DailyRewardCard() {
               <PointsIcon width={42} height={42} />
               <span>+20</span>
             </div>
-            <Button disabled={true} variant={"secondary"}>
-              Claim
+
+            <Button
+              onClick={() => mutate()}
+              disabled={data.data.claimed}
+              variant={"secondary"}
+            >
+              {!isPending && !data.data.claimed ? "Claim" : "Claimed"}
+              {isPending && "Claiming..."}
             </Button>
           </div>
         </CardTitle>
@@ -38,6 +54,10 @@ export default function DailyRewardCard() {
         <div className="text-muted-foreground">
           Claim your daily reward & come back tomorrow
         </div>
+        {isSuccess && (
+          <p className="text-green-600 mt-2">Reward claimed successfully!</p>
+        )}
+        {claimError && <ErrorText message={claimError.message as string} />}
       </CardFooter>
     </Card>
   );

@@ -1,15 +1,23 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 interface EmptyListMessageProps {
   title: string;
   description: string;
+  className?: string;
 }
 export default function EmptyListMessage({
   title,
   description,
+  className,
 }: EmptyListMessageProps) {
   return (
-    <div className="flex gap-8 items-center justify-center">
+    <div
+      className={cn(
+        "flex flex-col gap-8 items-center justify-center text-center",
+        className
+      )}
+    >
       <Image
         src={"images/empty-state-illustration.svg"}
         alt="Empty state image"

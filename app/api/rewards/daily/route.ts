@@ -3,8 +3,9 @@ import { TransactionSource } from "@prisma/client";
 import isAuthenticated from "@/utils/isAuthenticated";
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import fieldErrorResponse from "@/utils/fieldErrorResponse";
 
-const DAILY_BONUS = 10; // points awarded per day
+const DAILY_BONUS = 20; // points awarded per day
 
 export async function POST(req: NextRequest) {
   const auth = await isAuthenticated(req);
@@ -14,36 +15,56 @@ export async function POST(req: NextRequest) {
   const userId = authUser.id;
 
   try {
-    // Check if user already claimed today
     const today = new Date();
     today.setHours(0, 0, 0, 0); // start of today
 
-    const claimedToday = await prisma.pointTransaction.findFirst({
+    const user = await prisma.user.findUnique({
       where: {
-        userId,
-        source: TransactionSource.DAILY_REWARD,
-        createdAt: { gte: today },
+        id: auth.data.id,
       },
     });
+    if (!user) return fieldErrorResponse("root", "User not found", 404);
 
-    if (claimedToday) {
-      return Response.json(
-        { error: "You have already claimed today's reward!" },
-        { status: 400 }
+    const lastClaim = user.lastDailyRewardDate
+      ? new Date(user.lastDailyRewardDate)
+      : null;
+
+    const isClaimedToday =
+      lastClaim &&
+      lastClaim.getDate() === today.getDate() &&
+      lastClaim.getMonth() === today.getMonth() &&
+      lastClaim.getFullYear() === today.getFullYear();
+
+    if (isClaimedToday) {
+      return fieldErrorResponse(
+        "root",
+        "You have already claimed today's reward!",
+        400
       );
     }
 
-    // Award points using reusable function
-    const newBalance = await earnPoints(
+    const { balance, transaction } = await earnPoints(
       userId,
       DAILY_BONUS,
       TransactionSource.DAILY_REWARD
     );
 
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        lastDailyRewardDate: transaction.createdAt,
+        currentStreak: { increment: 1 },
+      },
+    });
+
     return Response.json({
       success: true,
-      message: `You have claimed ${DAILY_BONUS} points today!`,
-      balance: newBalance,
+      data: {
+        message: `You have claimed ${DAILY_BONUS} points today!`,
+        balance,
+      },
     });
   } catch (err: any) {
     return Response.json({ error: err.message }, { status: 500 });

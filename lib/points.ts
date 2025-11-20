@@ -31,7 +31,7 @@ export async function earnPoints(
     });
 
     // log transaction
-    await tx.pointTransaction.create({
+    const transaction = await tx.pointTransaction.create({
       data: {
         userId,
         amount,
@@ -40,7 +40,10 @@ export async function earnPoints(
       },
     });
 
-    return updatedUser.points;
+    return {
+      transaction,
+      balance: updatedUser.points,
+    };
   });
 }
 
