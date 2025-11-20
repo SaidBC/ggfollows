@@ -1,6 +1,7 @@
 "use client";
 import EmptyListMessage from "@/components/EmptyListMessage";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -77,7 +78,7 @@ export default function TableSection({}: TableSectionProps) {
                   <TableCell>{transaction.source}</TableCell>
                   <TableCell>{formatedDate}</TableCell>
                   <TableCell className="font-bold">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center  justify-end gap-2">
                       <PointsIcon />
                       <span>{transaction.amount}</span>
                     </div>
@@ -88,14 +89,18 @@ export default function TableSection({}: TableSectionProps) {
         </TableBody>
       </Table>
       {transactions && transactions.length === 0 && (
-        <div className=" mx-auto">
+        <div className=" ">
           <EmptyListMessage
             title="Your transaction history is empty"
             description="Start claiming rewards to track your earned points."
           />
         </div>
       )}
-      {isLoading && "Loading ..."}
+      {isLoading && (
+        <div className="w-full py-8">
+          <Spinner className="size-16 text-secondary mx-auto" />
+        </div>
+      )}
     </div>
   );
 }

@@ -14,8 +14,8 @@ export default function EmptyListMessage({
         src={"images/empty-state-illustration.svg"}
         alt="Empty state image"
         className="w-38 object-contain"
-        width={64}
-        height={64}
+        width={152}
+        height={152}
       />
       <div className="flex flex-col gap-2 ">
         <h2 className="font-bold text-3xl text-neutral-300">{title}</h2>

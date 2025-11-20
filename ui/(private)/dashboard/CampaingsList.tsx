@@ -63,8 +63,7 @@ export default function CampaignList() {
   const campaigns = data.data;
 
   return (
-    <div className="col-start-1 col-end-3 flex flex-col gap-4">
-      <h1 className="font-bold text-3xl my-2 text-neutral-300">Campaigns :</h1>
+    <>
       <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 ">
         {campaigns.map((campaign) => {
           return (
@@ -87,6 +86,6 @@ export default function CampaignList() {
           />
         </div>
       )}
-    </div>
+    </>
   );
 }

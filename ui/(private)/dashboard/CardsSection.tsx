@@ -7,6 +7,7 @@ import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import DailyRewardCard from "./DailyRewardCard";
 import CampaignList from "./CampaingsList";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function CardsSection() {
   return (
@@ -45,7 +46,34 @@ export default function CardsSection() {
           </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>
-      <CampaignList />
+      <div className="col-start-1 col-end-3 flex flex-col gap-4">
+        <h1 className="font-bold text-3xl my-2 text-neutral-300">
+          Campaigns :
+        </h1>
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <div>
+                  There was an error!
+                  <button onClick={() => resetErrorBoundary()}>
+                    Try again
+                  </button>
+                </div>
+              )}
+            >
+              <Suspense
+                fallback={
+                  <Spinner className="size-16 text-secondary mx-auto" />
+                }
+              >
+                <CampaignList />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
+      </div>
     </div>
   );
 }
