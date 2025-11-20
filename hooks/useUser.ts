@@ -7,7 +7,6 @@ export function useUser() {
     queryKey: ["user"],
     queryFn: async () => {
       const res = await apiAxios.get<GetUserMeResponse>("/users/me");
-      console.log(res);
       return res.data;
     },
   });

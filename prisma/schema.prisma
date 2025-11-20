@@ -40,22 +40,24 @@ model Session {
 }
 
 model User {
-  id                String             @id @default(cuid())
-  role              Role               @default(USER)
-  email             String?            @unique
-  username          String?            @unique
-  firstname         String?
-  lastname          String?
-  name              String?
-  password          String?
-  emailVerified     DateTime?
-  image             String?
-  bio               String?            @db.Text
-  accounts          Account[]
-  sessions          Session[]
-  verificationCodes VerificationCode[]
-  points            Int                @default(0)
-  pointTransactions PointTransaction[]
+  id                  String             @id @default(cuid())
+  role                Role               @default(USER)
+  email               String?            @unique
+  username            String?            @unique
+  firstname           String?
+  lastname            String?
+  name                String?
+  password            String?
+  emailVerified       DateTime?
+  image               String?
+  bio                 String?            @db.Text
+  accounts            Account[]
+  sessions            Session[]
+  verificationCodes   VerificationCode[]
+  points              Int                @default(0)
+  pointTransactions   PointTransaction[]
+  currentStreak       Int                @default(0)
+  lastDailyRewardDate DateTime?
 }
 
 enum TransactionType {
@@ -64,7 +66,7 @@ enum TransactionType {
 }
 
 enum TransactionSource {
-  SIGNUP_BONUS
+  CAMPAIGN
   DAILY_REWARD
   TASK_ACTION // if user create follow task or done a other users follow task
   COMPLETE_TASK // if the website makes a tasks and missions rewards etc
@@ -73,14 +75,51 @@ enum TransactionSource {
   REFERRAL_BONUS
 }
 
+enum RewardType {
+  POINTS
+}
+
+model RewardCampaign {
+  id       String  @id @default(cuid())
+  name     String  @unique // e.g. "NEW_USER_2024"
+  isActive Boolean @default(true) // Emergency kill switch
+
+  // --- Display Info ---
+  title       String
+  description String?
+
+  // --- The "Ticket" System (Concurrency) ---
+  claimedCount Int @default(0)
+  maxLimit     Int @default(1000) // 0 = Unlimited
+
+  // --- Reward Definition ---
+  rewardAmount Int // e.g. 500
+  rewardType   RewardType @default(POINTS) // POINTS, CASH (Coming soon), COUPON
+
+  // --- Rules / Logic ---
+  requiresNewUser   Boolean @default(false)
+  maxAccountAgeDays Int? // e.g. 7 (User must have joined in last 7 days)
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Relation to track who claimed it
+  claims PointTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PointTransaction {
-  id        String            @id @default(cuid())
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  amount    Int
-  type      TransactionType
-  source    TransactionSource
-  createdAt DateTime          @default(now())
+  id               String            @id @default(cuid())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  amount           Int
+  type             TransactionType
+  source           TransactionSource
+  createdAt        DateTime          @default(now())
+  rewardCampaign   RewardCampaign?   @relation(fields: [rewardCampaignId], references: [id])
+  rewardCampaignId String?
 }
 
 model VerificationCode {

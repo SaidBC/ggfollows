@@ -1,4 +1,4 @@
-import { Prisma, User } from "@prisma/client";
+import { PointTransaction, Prisma, RewardCampaign, User } from "@prisma/client";
 
 interface ResponseSuccess<T> {
   success: true;
@@ -28,3 +28,30 @@ export type VerifyEmailCodeResponse =
   | FieldsErrorResponse;
 
 export type GetUserMeResponse = ResponseSuccess<User> | FieldsErrorResponse;
+export type GetPointsBalanceResponse =
+  | ResponseSuccess<{
+      points: boolean;
+      changes: {
+        month: {
+          change: string;
+          currentTotal: number;
+          previousTotal: number;
+        };
+      };
+    }>
+  | FieldsErrorResponse;
+
+export type GetDailyRewardStatusResponse =
+  | ResponseSuccess<{
+      claimed: boolean;
+      streak: number;
+    }>
+  | FieldsErrorResponse;
+
+export type GetCampaignsResponse =
+  | ResponseSuccess<RewardCampaign[]>
+  | FieldsErrorResponse;
+
+export type GetTransactionsResponse =
+  | ResponseSuccess<PointTransaction[]>
+  | FieldsErrorResponse;
