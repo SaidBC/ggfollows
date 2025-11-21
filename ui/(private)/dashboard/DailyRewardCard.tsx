@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useClaimDailyReward } from "@/hooks/useClaimDailyReward";
 import { useDailyReward } from "@/hooks/useDailyRewardStatus";
@@ -41,8 +42,18 @@ export default function DailyRewardCard() {
               disabled={data.data.claimed}
               variant={"secondary"}
             >
-              {!isPending && !data.data.claimed ? "Claim" : "Claimed"}
-              {isPending && "Claiming..."}
+              {!isPending ? (
+                !data.data.claimed ? (
+                  "Claim"
+                ) : (
+                  "Claimed"
+                )
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Spinner />
+                  <span>Claiming ...</span>
+                </div>
+              )}
             </Button>
           </div>
         </CardTitle>

@@ -11,7 +11,11 @@ interface ResponseFailure<T> {
 }
 
 export interface IErrors {
-  [k: string]: string;
+  [k: string]:
+    | {
+        message: string;
+      }
+    | undefined;
 }
 
 export type FieldsErrorResponse = ResponseFailure<IErrors>;
@@ -62,3 +66,5 @@ export type ClaimDailyRewardResponse =
       balance: number;
     }>
   | FieldsErrorResponse;
+
+export type UpdateUserResponse = ResponseSuccess<User> | FieldsErrorResponse;

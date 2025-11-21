@@ -4,21 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EmailStatus from "@/ui/(private)/settings/EmailStatus";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "@/hooks/useUser";
+import SettingRow from "./SettingsRow";
 
 export default function AccountSettingsSection() {
-  //   const session = useSession();
-  //   if (session.status === "unauthenticated" || !session.data)
-  //     return <>You must be logged in to see this page</>;
+  const { data: user, error, isSuccess } = useUser();
+  if (!isSuccess) return <></>;
 
-  const user = {
-    name: "Razzouk",
-    email: "razzouk@example.com",
-    image: "https://example.com/avatar.png",
-    id: "user_01",
-    username: "razzouk_dev",
-    role: "user",
-    emailVerified: null,
-  };
   return (
     <div>
       <div className="grid gap-2 my-4">
@@ -33,9 +25,15 @@ export default function AccountSettingsSection() {
         <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b pb-4">
           <h3 className="font-bold text-sm">Profile</h3>
           <div>
-            <Avatar className="h-8 w-8 rounded-lg ">
-              <AvatarImage src={"/next.svg"} alt={user.username} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+            <Avatar className="h-8 w-8 rounded-full ">
+              <AvatarImage
+                src={"/"}
+                alt={(user.username || "a User") + "'s profile image"}
+              />
+              <AvatarFallback className="rounded-full bg-secondary text-secondary-foreground  flex items-center justify-center uppercase text-sm font-bold">
+                {user.firstname?.charAt(0)}
+                {user.lastname?.charAt(0)}
+              </AvatarFallback>
             </Avatar>
           </div>
           <Button variant="secondary">Update Profile</Button>
@@ -50,16 +48,11 @@ export default function AccountSettingsSection() {
           />
           <Button variant="secondary">Update Email</Button>
         </div>
-        <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b pb-4">
-          <h3 className="font-bold text-sm">Username</h3>
-          <Input
-            type="text"
-            placeholder="Enter your email"
-            defaultValue={user.username}
-            disabled
-          />
-          <Button variant="secondary">Update Username</Button>
-        </div>
+        <SettingRow
+          label="Username"
+          field="username"
+          value={user.username || ""}
+        />
         <EmailStatus verified={Boolean(user.emailVerified)} />
         <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b pb-4">
           <h3 className="font-bold text-sm">Account tier </h3>

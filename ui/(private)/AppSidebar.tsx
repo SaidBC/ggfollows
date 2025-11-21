@@ -5,9 +5,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import SidebarLogo from "./SidebarLogo";
 import ProfileView from "./ProfileView";
@@ -26,8 +24,8 @@ export default function AppSidebar({
   const { data, isLoading, error } = useUser();
 
   if (error) return <p>Error loading user</p>;
-  if (!isLoading && (!data || !data.success)) return <p>Error loading user</p>;
-  const user = data ? (data.success ? data.data : null) : null;
+  if (!isLoading && !data) return <p>Error loading user</p>;
+  const user = data;
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>

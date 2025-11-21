@@ -7,7 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 async function claimDailyReward() {
   const res = await apiAxios.post<ClaimDailyRewardResponse>("/rewards/daily");
   if (!res.data.success) {
-    throw new Error(res.data.errors.root || "Failed to claim daily reward");
+    throw new Error(
+      res.data.errors.root?.message || "Failed to claim daily reward"
+    );
   }
   return res.data.data;
 }
