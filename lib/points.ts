@@ -10,7 +10,7 @@ export async function getBalance(userId: string) {
     select: { points: true },
   });
 
-  return user?.points ?? 0;
+  return user ? user.points : null;
 }
 
 /**
@@ -71,7 +71,7 @@ export async function spendPoints(
       data: { points: { decrement: amount } },
     });
 
-    await tx.pointTransaction.create({
+    const transaction = await tx.pointTransaction.create({
       data: {
         userId,
         amount: -amount,
@@ -80,6 +80,9 @@ export async function spendPoints(
       },
     });
 
-    return updatedUser.points;
+    return {
+      transaction,
+      balance: updatedUser.points,
+    };
   });
 }
