@@ -41,7 +41,6 @@ export function LoginCard({
       });
 
       if (result?.error) {
-        console.log("im here", errors);
         setError("root", { message: "Invalid email or password" });
       } else {
         setTimeout(() => {

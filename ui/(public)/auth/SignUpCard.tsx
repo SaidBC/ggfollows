@@ -64,7 +64,7 @@ export function SignUpCard({
           for (const field of fields) {
             if (field in data.errors)
               setError(field, {
-                message: data.errors[field],
+                message: data.errors[field]!.message,
               });
           }
         }

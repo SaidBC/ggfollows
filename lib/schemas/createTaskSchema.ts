@@ -6,14 +6,16 @@ import taskDescriptionSchema from "./taskDescriptionSchema";
 import taskQuantitySchema from "./taskQuantitySchema";
 import taskAmountSchema from "./taskAmountSchema";
 import taskLinkSchema from "./taskLinkSchema";
+import allowMultiAccountsSchema from "./allowMultiAccountsSchema";
 
 const createTaskSchema = z.object({
-  title: z.optional(taskTitleSchema),
+  title: taskTitleSchema,
   description: z.optional(taskDescriptionSchema),
   platform: taskPlatformSchema,
   quantity: taskQuantitySchema,
   amount: taskAmountSchema,
   link: taskLinkSchema,
+  allowMultiAccounts: allowMultiAccountsSchema,
 });
 
 export default createTaskSchema;

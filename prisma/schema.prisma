@@ -7,10 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- Enums ---
+
 enum Role {
   USER
   ADMIN
 }
+
+enum TransactionType {
+  EARN
+  SPEND
+}
+
+enum TransactionSource {
+  CAMPAIGN
+  DAILY_REWARD
+  TASK_COMPLETION
+  TASK_FUNDING
+  PURCHASE
+  ADMIN_ADJUST
+  REFERRAL_BONUS
+}
+
+enum RewardType {
+  POINTS
+}
+
+enum TaskPlatform {
+  FACEBOOK
+  INSTAGRAM
+  YOUTUBE
+  X
+}
+
+enum TaskCompletionStatus {
+  PENDING // User submitted the completion proof
+  VERIFIED // System/Admin confirmed the completion and rewarded points
+  REJECTED // Completion proof was invalid
+}
+
+enum VerificationCodeReasons {
+  EMAIL_VERIFICATION
+}
+
+// --- Authentication Models (Standard) ---
 
 model Account {
   id                String  @id @default(cuid())
@@ -39,111 +79,12 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-  id                  String             @id @default(cuid())
-  role                Role               @default(USER)
-  email               String?            @unique
-  username            String?            @unique
-  firstname           String?
-  lastname            String?
-  name                String?
-  password            String?
-  emailVerified       DateTime?
-  image               String?
-  bio                 String?            @db.Text
-  accounts            Account[]
-  sessions            Session[]
-  verificationCodes   VerificationCode[]
-  points              Int                @default(0)
-  pointTransactions   PointTransaction[]
-  tasks               Task[]
-  currentStreak       Int                @default(0)
-  lastDailyRewardDate DateTime?
-}
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-enum TransactionType {
-  EARN
-  SPEND
-}
-
-enum TransactionSource {
-  CAMPAIGN
-  DAILY_REWARD
-  TASK_ACTION // if user create follow task or done a other users follow task
-  COMPLETE_TASK // if the website makes a tasks and missions rewards etc
-  PURCHASE
-  ADMIN_ADJUST
-  REFERRAL_BONUS
-}
-
-enum RewardType {
-  POINTS
-}
-
-model RewardCampaign {
-  id       String  @id @default(cuid())
-  name     String  @unique // e.g. "NEW_USER_2024"
-  isActive Boolean @default(true) // Emergency kill switch
-
-  // --- Display Info ---
-  title       String
-  description String?
-
-  // --- The "Ticket" System (Concurrency) ---
-  claimedCount Int @default(0)
-  maxLimit     Int @default(1000) // 0 = Unlimited
-
-  // --- Reward Definition ---
-  rewardAmount Int // e.g. 500
-  rewardType   RewardType @default(POINTS) // POINTS, CASH (Coming soon), COUPON
-
-  // --- Rules / Logic ---
-  requiresNewUser   Boolean @default(false)
-  maxAccountAgeDays Int? // e.g. 7 (User must have joined in last 7 days)
-
-  startDate DateTime?
-  endDate   DateTime?
-
-  // Relation to track who claimed it
-  claims PointTransaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PointTransaction {
-  id               String            @id @default(cuid())
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String
-  amount           Int
-  type             TransactionType
-  source           TransactionSource
-  createdAt        DateTime          @default(now())
-  rewardCampaign   RewardCampaign?   @relation(fields: [rewardCampaignId], references: [id])
-  rewardCampaignId String?
-}
-
-enum TaskPlatform {
-  FACEBOOK
-  INSTAGRAM
-  YOUTUBE
-  X
-}
-
-model Task {
-  id String @id @default(cuid())
-
-  title       String?
-  description String?
-  quantity    Int
-  amount      Int
-  platform    TaskPlatform
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([identifier, token])
 }
 
 model VerificationCode {
@@ -156,14 +97,121 @@ model VerificationCode {
   createdAt   DateTime                @default(now())
 }
 
-enum VerificationCodeReasons {
-  EMAIL_VERIFICATION
+// --- Core User Model ---
+
+model User {
+  id            String    @id @default(cuid())
+  role          Role      @default(USER)
+  email         String?   @unique
+  username      String?   @unique
+  firstname     String?
+  lastname      String?
+  name          String?
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  bio           String?   @db.Text
+
+  accounts          Account[]
+  sessions          Session[]
+  verificationCodes VerificationCode[]
+
+  points            Int                @default(0)
+  pointTransactions PointTransaction[]
+
+  // Task relations
+  createdTasks    Task[] // Tasks created by this user
+  taskCompletions TaskCompletion[] // Tasks completed by this user
+
+  currentStreak       Int       @default(0)
+  lastDailyRewardDate DateTime?
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+// --- Points & Rewards ---
 
-  @@unique([identifier, token])
+model RewardCampaign {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  isActive Boolean @default(true)
+
+  title       String
+  description String?
+
+  claimedCount Int @default(0)
+  maxLimit     Int @default(1000)
+
+  rewardAmount Int
+  rewardType   RewardType @default(POINTS)
+
+  requiresNewUser   Boolean @default(false)
+  maxAccountAgeDays Int?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  claims PointTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PointTransaction {
+  id     String            @id @default(cuid())
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  amount Int
+  type   TransactionType
+  source TransactionSource
+
+  rewardCampaign   RewardCampaign? @relation(fields: [rewardCampaignId], references: [id])
+  rewardCampaignId String?
+
+  // NEW: Link to the specific completion event that triggered the reward
+  taskCompletion   TaskCompletion? @relation(fields: [taskCompletionId], references: [id])
+  taskCompletionId String?         @unique // Ensures one reward per verified completion
+
+  createdAt DateTime @default(now())
+}
+
+// --- Task System ---
+
+model Task {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  link        String
+  quantity    Int
+  amount      Int
+  platform    TaskPlatform
+
+  creator User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  completions TaskCompletion[]
+
+  allowsMultiAccount Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TaskCompletion {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+
+  completionProof String @db.Text
+
+  status TaskCompletionStatus @default(PENDING)
+
+  pointReward PointTransaction?
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, taskId, completionProof])
 }

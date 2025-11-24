@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const { transaction } = await spendPoints(
       auth.data.id,
       total,
-      "TASK_ACTION"
+      "TASK_FUNDING"
     );
 
     return NextResponse.json({

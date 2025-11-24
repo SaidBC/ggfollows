@@ -39,7 +39,6 @@ export default function SettingRow({
       }
     );
   };
-  console.log(isSuccess && !data.success && data.errors[field]?.message);
   return (
     <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b pb-4">
       <h3 className="font-bold text-sm">{label}</h3>

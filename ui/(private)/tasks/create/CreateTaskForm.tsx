@@ -3,6 +3,7 @@ import ErrorText from "@/components/ErrorText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -12,12 +13,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import PointsIcon from "@/components/vectors/PointIcon";
+import { useCreateTask } from "@/hooks/useCreateTask";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
 export default function CreateTaskForm() {
+  const { mutate } = useCreateTask();
   const {
     watch,
     control,
@@ -26,19 +29,45 @@ export default function CreateTaskForm() {
     formState: { errors, isLoading },
     setError,
   } = useForm({ resolver: zodResolver(createTaskSchema) });
-  console.log(errors);
   const onSubmit = async function (data: z.output<typeof createTaskSchema>) {
-    console.log(data);
+    try {
+      mutate(data, {
+        onSuccess: (data) => {
+          if (!data.success) {
+            const fields = [
+              "platform",
+              "allowMultiAccounts",
+              "quantity",
+              "link",
+              "title",
+              "description",
+              "root",
+            ] as const;
+            for (const field of fields) {
+              if (field in data.errors)
+                setError(field, {
+                  message: data.errors[field]!.message,
+                });
+            }
+          }
+        },
+      });
+    } catch (error) {
+      setError("root", {
+        message: "An error occurred during creating. Please try again.",
+      });
+    }
   };
   const amount = watch("amount");
   const quantity = watch("quantity");
 
   const total = (Number(amount) || 0) * (Number(quantity) || 0);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title">Title (optional)</Label>
           <Input
             className=""
             {...register("title")}
@@ -46,21 +75,23 @@ export default function CreateTaskForm() {
             type="text"
             placeholder="Like the post"
           />
-          {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+          {errors.title && (
+            <ErrorText message={errors.title.message || "Invalid title"} />
+          )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="description">Description (optional)</Label>
           <Textarea
             className=""
             {...register("description")}
             id="description"
             placeholder="Just like the post"
           />
-          {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+          {errors.description && (
+            <ErrorText
+              message={errors.description.message || "Invalid description"}
+            />
+          )}
         </div>
         <div className="flex gap-4">
           <div className="grid gap-2">
@@ -77,16 +108,16 @@ export default function CreateTaskForm() {
                     <SelectValue placeholder="platforms" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="facebook">Facebook</SelectItem>
-                    <SelectItem value="youtube">Youtube</SelectItem>
-                    <SelectItem value="instagram">Instagram</SelectItem>
+                    <SelectItem value="FACEBOOK">Facebook</SelectItem>
+                    <SelectItem value="YOUTUBE">Youtube</SelectItem>
+                    <SelectItem value="INSTAGRAM">Instagram</SelectItem>
                   </SelectContent>
                 </Select>
               )}
             />
-            {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+            {errors.platform && (
+              <ErrorText message={errors.platform.message || "Invalid email"} />
+            )}
           </div>
           <div className="grow grid gap-2">
             <Label htmlFor="link">Link</Label>
@@ -97,9 +128,9 @@ export default function CreateTaskForm() {
               type="text"
               placeholder="Where user will go"
             />
-            {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+            {errors.link && (
+              <ErrorText message={errors.link.message || "Invalid email"} />
+            )}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -112,9 +143,11 @@ export default function CreateTaskForm() {
               type="number"
               placeholder="Amount that's you give per one"
             />
-            {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+            {errors.amount && (
+              <ErrorText
+                message={errors.amount.message || "Invalid amount value"}
+              />
+            )}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="quantity">Quantity</Label>
@@ -125,10 +158,54 @@ export default function CreateTaskForm() {
               type="number"
               placeholder="Quantity that's you need"
             />
-            {/* {errors.email && (
-          <ErrorText message={errors.email.message || "Invalid email"} />
-        )} */}
+            {errors.quantity && (
+              <ErrorText
+                message={errors.quantity.message || "Invalid quantity value"}
+              />
+            )}
           </div>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="allowMultiAccounts" asChild>
+            <span>Allow multiple accounts</span>
+          </Label>
+          <Controller
+            control={control}
+            name="allowMultiAccounts"
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value as "true" | "false"}
+                onValueChange={field.onChange}
+                id="allowMultiAccounts"
+                className="flex flex-row"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    className="data-[state=checked]:text-secondary"
+                    value="true"
+                    id="allowMultiAccounts-yes"
+                  />
+                  <Label htmlFor="allowMultiAccounts-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    className="text-secondary"
+                    value="false"
+                    id="allowMultiAccounts-no"
+                  />
+                  <Label htmlFor="allowMultiAccounts-no">No</Label>
+                </div>
+              </RadioGroup>
+            )}
+          />
+          {errors.allowMultiAccounts && (
+            <ErrorText
+              message={
+                errors.allowMultiAccounts.message ||
+                "Invalid allow multiple accounts value"
+              }
+            />
+          )}
         </div>
         <Button variant={"secondary"}>
           <div className="flex gap-2">
@@ -139,6 +216,11 @@ export default function CreateTaskForm() {
             </div>
           </div>
         </Button>
+        {errors.root && (
+          <ErrorText
+            message={errors.root.message || "An expected error occured"}
+          />
+        )}
       </div>
     </form>
   );

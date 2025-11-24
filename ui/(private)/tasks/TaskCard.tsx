@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import PointsIcon from "@/components/vectors/PointIcon";
-import { IconX } from "@tabler/icons-react";
 import { LinkIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +16,7 @@ function RemoveButton() {
 interface TaskCardProps {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   amount: number;
   complated: number;
   max: number;

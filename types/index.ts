@@ -1,4 +1,10 @@
-import { PointTransaction, Prisma, RewardCampaign, User } from "@prisma/client";
+import {
+  PointTransaction,
+  Prisma,
+  RewardCampaign,
+  Task,
+  User,
+} from "@prisma/client";
 
 interface ResponseSuccess<T> {
   success: true;
@@ -60,10 +66,25 @@ export type GetTransactionsResponse =
   | ResponseSuccess<PointTransaction[]>
   | FieldsErrorResponse;
 
+export type TasksWithCompletions = (Task & {
+  __count: { completions: number };
+})[];
+
+export type GetTasksResponse =
+  | ResponseSuccess<TasksWithCompletions>
+  | FieldsErrorResponse;
+
 export type ClaimDailyRewardResponse =
   | ResponseSuccess<{
       message: string;
       balance: number;
+    }>
+  | FieldsErrorResponse;
+
+export type CreateTaskResponse =
+  | ResponseSuccess<{
+      transaction: PointTransaction;
+      task: Task;
     }>
   | FieldsErrorResponse;
 
