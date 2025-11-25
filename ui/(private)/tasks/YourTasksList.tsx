@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import siteConfig from "@/lib/siteConfig";
 
 export default function YourTasksList() {
-  const platformIcons = siteConfig.platformsIcons;
+  const platform = siteConfig.platforms;
 
   const session = useSession();
 
@@ -35,7 +35,7 @@ export default function YourTasksList() {
           description={task.description || ""}
           complated={task._count.completions}
           max={task.quantity}
-          icon={platformIcons[task.platform].icon}
+          icon={platform[task.platform].icon}
           platformLink={task.link}
           amount={task.amount}
           id={task.id}

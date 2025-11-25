@@ -1,5 +1,8 @@
 import z from "zod";
 
-const taskQuantitySchema = z.coerce.number().int().min(1);
+const taskQuantitySchema = z.coerce
+  .number()
+  .int({ error: "Amount must be a integer" })
+  .min(1, { error: "Amount is must be higher than 1" });
 
 export default taskQuantitySchema;

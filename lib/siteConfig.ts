@@ -106,18 +106,22 @@ const siteConfig = {
       href: "/plans",
     },
   ],
-  platformsIcons: {
+  platforms: {
     X: {
       icon: IconBrandX,
+      hostnames: ["x.com", "twitter.com"],
     },
     FACEBOOK: {
       icon: IconBrandFacebook,
+      hostnames: ["facebook.com"],
     },
     INSTAGRAM: {
       icon: IconBrandInstagram,
+      hostnames: ["instagram.com"],
     },
     YOUTUBE: {
       icon: IconBrandYoutube,
+      hostnames: ["youtube.com"],
     },
   },
 };

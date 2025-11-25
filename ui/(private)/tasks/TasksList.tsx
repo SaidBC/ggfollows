@@ -5,7 +5,7 @@ import { useGetTasks } from "@/hooks/useGetTasks";
 import siteConfig from "@/lib/siteConfig";
 
 export default function TasksList() {
-  const platformIcons = siteConfig.platformsIcons;
+  const platforms = siteConfig.platforms;
   const { data, error } = useGetTasks({ creator: undefined });
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
@@ -20,7 +20,7 @@ export default function TasksList() {
           description={task.description || ""}
           complated={task._count.completions}
           max={task.quantity}
-          icon={platformIcons[task.platform].icon}
+          icon={platforms[task.platform].icon}
           platformLink={task.link}
           amount={task.amount}
           id={task.id}
