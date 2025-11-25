@@ -12,7 +12,7 @@ import siteConfig from "../siteConfig";
 const createTaskSchema = z
   .object({
     title: taskTitleSchema,
-    description: z.optional(taskDescriptionSchema),
+    description: taskDescriptionSchema,
     platform: taskPlatformSchema,
     quantity: taskQuantitySchema,
     amount: taskAmountSchema,
@@ -20,11 +20,16 @@ const createTaskSchema = z
     allowMultiAccounts: allowMultiAccountsSchema,
   })
   .superRefine((data, ctx) => {
-    const { hostname } = new URL(data.link);
+    let hostname: string;
 
-    const allowedHosts = siteConfig.platforms[data.platform]?.hostnames ?? [];
+    try {
+      hostname = new URL(data.link).hostname;
+    } catch {
+      return;
+    }
 
-    if (!allowedHosts.includes(hostname)) {
+    const allowedHosts = siteConfig.platforms[data.platform].hostnames;
+    if (!allowedHosts.some((data) => hostname.endsWith(data))) {
       ctx.addIssue({
         code: "custom",
         message: `Link must be from ${allowedHosts.join(", ")}`,

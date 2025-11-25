@@ -10,13 +10,34 @@ interface FailureState {
   isSuccess: false;
   response: NextResponse<{
     success: false;
-    errors: ReturnType<typeof flattenError>;
+    errors: {
+      [P in keyof z.core.$InferObjectOutput<any, {}>]?: {
+        message: string;
+      };
+    };
   }>;
 }
 type TValidateData = <T extends ZodRawShape>(
   req: NextRequest,
   schema: ZodObject<T>
 ) => Promise<SuccessState<z.infer<ZodObject<T>>> | FailureState>;
+function transform(obj: {
+  [P in keyof z.core.$InferObjectOutput<any, {}>]?: string[] | undefined;
+}) {
+  const result: {
+    [P in keyof z.core.$InferObjectOutput<any, {}>]?: {
+      message: string;
+    };
+  } = {};
+
+  for (const key in obj) {
+    if (Array.isArray(obj[key]) && obj[key].length > 0) {
+      result[key] = { message: obj[key][0] };
+    }
+  }
+
+  return result;
+}
 
 const validateData: TValidateData = async function (req, schema) {
   const body = await req.json();
@@ -28,7 +49,7 @@ const validateData: TValidateData = async function (req, schema) {
       response: NextResponse.json(
         {
           success: false,
-          errors: z.flattenError(validatedData.error),
+          errors: transform(z.flattenError(validatedData.error).fieldErrors),
         },
         { status: 400 }
       ),

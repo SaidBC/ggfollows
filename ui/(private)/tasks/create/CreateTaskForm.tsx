@@ -77,7 +77,7 @@ export default function CreateTaskForm() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="title">Title (optional)</Label>
+          <Label htmlFor="title">Title</Label>
           <Input
             className=""
             {...register("title")}
@@ -184,7 +184,7 @@ export default function CreateTaskForm() {
             name="allowMultiAccounts"
             render={({ field }) => (
               <RadioGroup
-                value={field.value}
+                value={String(field.value)}
                 onValueChange={field.onChange}
                 id="allowMultiAccounts"
                 className="flex flex-row"
