@@ -11,8 +11,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useGetTasks } from "@/hooks/useGetTasks";
 import { useSession } from "next-auth/react";
+import siteConfig from "@/lib/siteConfig";
 
 export default function YourTasksList() {
+  const platformIcons = siteConfig.platformsIcons;
+
   const session = useSession();
 
   const { data, error } = useGetTasks({
@@ -30,13 +33,14 @@ export default function YourTasksList() {
           key={task.id}
           title={task.title}
           description={task.description || ""}
-          complated={task.__count.completions}
+          complated={task._count.completions}
           max={task.quantity}
-          srcImage=""
+          icon={platformIcons[task.platform].icon}
           platformLink={task.link}
           amount={task.amount}
           id={task.id}
-          removeable={true}
+          view={"CREATOR"}
+          creator={task.creator}
         />
       ))}
       {tasks.length === 0 && (

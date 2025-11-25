@@ -3,6 +3,7 @@ import {
   Prisma,
   RewardCampaign,
   Task,
+  TaskCompletion,
   User,
 } from "@prisma/client";
 
@@ -67,7 +68,10 @@ export type GetTransactionsResponse =
   | FieldsErrorResponse;
 
 export type TasksWithCompletions = (Task & {
-  __count: { completions: number };
+  creator: {
+    username: string;
+  };
+  _count: { completions: number };
 })[];
 
 export type GetTasksResponse =
@@ -89,3 +93,12 @@ export type CreateTaskResponse =
   | FieldsErrorResponse;
 
 export type UpdateUserResponse = ResponseSuccess<User> | FieldsErrorResponse;
+
+export type CheckTaskResponse =
+  | ResponseSuccess<{
+      transaction: PointTransaction;
+      taskCompletion: TaskCompletion;
+    }>
+  | FieldsErrorResponse;
+
+export type DeleteTaskResponse = ResponseSuccess<Task> | FieldsErrorResponse;

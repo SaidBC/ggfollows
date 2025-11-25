@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useUser() {
   return useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", "points"],
     queryFn: async () => {
       const res = await apiAxios.get<GetUserMeResponse>("/users/me");
       if (!res.data.success) {

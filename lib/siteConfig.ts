@@ -1,5 +1,9 @@
 import {
   IconAppWindow,
+  IconBrandFacebook,
+  IconBrandInstagram,
+  IconBrandX,
+  IconBrandYoutube,
   IconChecklist,
   IconClipboardPlus,
   IconCrown,
@@ -102,6 +106,20 @@ const siteConfig = {
       href: "/plans",
     },
   ],
+  platformsIcons: {
+    X: {
+      icon: IconBrandX,
+    },
+    FACEBOOK: {
+      icon: IconBrandFacebook,
+    },
+    INSTAGRAM: {
+      icon: IconBrandInstagram,
+    },
+    YOUTUBE: {
+      icon: IconBrandYoutube,
+    },
+  },
 };
 
 export default siteConfig;

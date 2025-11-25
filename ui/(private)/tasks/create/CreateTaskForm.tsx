@@ -11,11 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useCreateTask } from "@/hooks/useCreateTask";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -23,12 +25,17 @@ export default function CreateTaskForm() {
   const { mutate } = useCreateTask();
   const {
     watch,
+    reset,
     control,
     handleSubmit,
     register,
     formState: { errors, isLoading },
     setError,
-  } = useForm({ resolver: zodResolver(createTaskSchema) });
+  } = useForm({
+    resolver: zodResolver(createTaskSchema),
+    defaultValues: { allowMultiAccounts: "false" },
+  });
+  const [isSuccess, setIsSuccess] = useState(false);
   const onSubmit = async function (data: z.output<typeof createTaskSchema>) {
     try {
       mutate(data, {
@@ -49,7 +56,10 @@ export default function CreateTaskForm() {
                   message: data.errors[field]!.message,
                 });
             }
+            return;
           }
+          setIsSuccess(true);
+          reset();
         },
       });
     } catch (error) {
@@ -174,7 +184,7 @@ export default function CreateTaskForm() {
             name="allowMultiAccounts"
             render={({ field }) => (
               <RadioGroup
-                value={field.value as "true" | "false"}
+                value={field.value}
                 onValueChange={field.onChange}
                 id="allowMultiAccounts"
                 className="flex flex-row"
@@ -207,19 +217,32 @@ export default function CreateTaskForm() {
             />
           )}
         </div>
-        <Button variant={"secondary"}>
-          <div className="flex gap-2">
-            <span>Post task</span>
-            <div className="flex items-center gap-1">
-              (<span>{total}</span>
-              <PointsIcon />)
+        <Button variant={"secondary"} disabled={isLoading}>
+          {!isLoading && (
+            <div className="flex gap-2">
+              <span>Post task</span>
+              <div className="flex items-center gap-1">
+                (<span>{total}</span>
+                <PointsIcon />)
+              </div>
             </div>
-          </div>
+          )}
+          {isLoading && (
+            <div className="flex items-center gap-4">
+              <Spinner className="size-4" />
+              <span>Creating ...</span>
+            </div>
+          )}
         </Button>
         {errors.root && (
           <ErrorText
             message={errors.root.message || "An expected error occured"}
           />
+        )}
+        {isSuccess && (
+          <p className="text-green-600 font-bold mt-2">
+            Task created successfully!
+          </p>
         )}
       </div>
     </form>

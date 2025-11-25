@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const validatedData = await validateData(req, createTaskSchema);
     if (!validatedData.isSuccess) return validatedData.response;
 
-    const { quantity, amount, description, title, platform } =
+    const { quantity, amount, description, title, platform, link } =
       validatedData.data;
     const total = quantity * amount;
 
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         description,
         quantity,
         amount,
+        link,
         platform,
         userId: auth.data.id,
       },
@@ -62,7 +63,21 @@ export async function GET(req: NextRequest) {
     const where: Prisma.TaskWhereInput = {};
     const { searchParams } = req.nextUrl;
 
-    const tasks = await prisma.task.findMany({ where: where });
+    const tasks = await prisma.task.findMany({
+      where: where,
+      include: {
+        creator: {
+          select: {
+            username: true,
+          },
+        },
+        _count: {
+          select: {
+            completions: true,
+          },
+        },
+      },
+    });
 
     return NextResponse.json({ success: true, data: tasks });
   } catch (error) {

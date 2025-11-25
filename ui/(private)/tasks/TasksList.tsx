@@ -2,8 +2,10 @@ import { TasksWithCompletions } from "@/types";
 import TaskCard from "./TaskCard";
 import EmptyListMessage from "@/components/EmptyListMessage";
 import { useGetTasks } from "@/hooks/useGetTasks";
+import siteConfig from "@/lib/siteConfig";
 
 export default function TasksList() {
+  const platformIcons = siteConfig.platformsIcons;
   const { data, error } = useGetTasks({ creator: undefined });
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
@@ -16,13 +18,14 @@ export default function TasksList() {
           key={task.id}
           title={task.title}
           description={task.description || ""}
-          complated={task.__count.completions}
+          complated={task._count.completions}
           max={task.quantity}
-          srcImage=""
+          icon={platformIcons[task.platform].icon}
           platformLink={task.link}
           amount={task.amount}
           id={task.id}
-          removeable={false}
+          view={"CLIENT"}
+          creator={task.creator}
         />
       ))}
       {tasks.length === 0 && (

@@ -163,11 +163,11 @@ model PointTransaction {
   type   TransactionType
   source TransactionSource
 
-  rewardCampaign   RewardCampaign? @relation(fields: [rewardCampaignId], references: [id])
+  rewardCampaign   RewardCampaign? @relation(fields: [rewardCampaignId], references: [id], onDelete: SetNull)
   rewardCampaignId String?
 
   // NEW: Link to the specific completion event that triggered the reward
-  taskCompletion   TaskCompletion? @relation(fields: [taskCompletionId], references: [id])
+  taskCompletion   TaskCompletion? @relation(fields: [taskCompletionId], references: [id], onDelete: SetNull)
   taskCompletionId String?         @unique // Ensures one reward per verified completion
 
   createdAt DateTime @default(now())
@@ -199,10 +199,10 @@ model Task {
 model TaskCompletion {
   id String @id @default(cuid())
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  task   Task   @relation(fields: [taskId], references: [id])
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
   completionProof String @db.Text
