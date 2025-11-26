@@ -1,15 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import bcrypt from "bcrypt";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import serverEnv from "@/utils/serverEnv";
 import clientEnv from "@/utils/clientEnv";
 import prisma from "./prisma";
-
-// Set default URL for NextAuth to avoid warnings
-process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || "http://localhost:3001";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -60,17 +56,10 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-    // Add OAuth providers (commented out until you configure them with proper credentials)
-    /* 
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
-    }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
+      clientId: serverEnv.GOOGLE_ID,
+      clientSecret: serverEnv.GOOGLE_SECRET,
     }),
-    */
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -107,7 +96,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: serverEnv.NEXTAUTH_SECRET,
-  // Add cookie settings for better security and cross-domain support in production
+  adapter: PrismaAdapter(prisma),
   cookies: {
     sessionToken: {
       name: `${
