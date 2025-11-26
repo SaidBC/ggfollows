@@ -18,12 +18,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        {
-          success: false,
-          errors: { root: "User with this email or username already exists" },
-        },
-        { status: 409 }
+      return fieldErrorResponse(
+        "root",
+        "User with this email or username already exists",
+        409
       );
     }
 
