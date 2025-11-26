@@ -30,7 +30,8 @@ const verifyEmailCodeAction: FormAction<typeof emailVerifySchema> =
         return {
           success: false,
           field: "root",
-          message: response.data.errors.root,
+          message:
+            response.data.errors.root?.message || "Unexpected error occures",
         };
       return { success: true, field: "root", message: "Done" };
     } catch (error) {
@@ -39,7 +40,9 @@ const verifyEmailCodeAction: FormAction<typeof emailVerifySchema> =
           return {
             success: false,
             field: "root",
-            message: error.response.data.errors.root,
+            message:
+              error.response.data.errors.root?.message ||
+              "Unexpected error occures",
           };
       }
       return {
