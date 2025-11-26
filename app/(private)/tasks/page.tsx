@@ -1,6 +1,26 @@
 import TasksSection from "@/ui/(private)/tasks/TasksSections";
 import YourTasksSection from "@/ui/(private)/tasks/YourTasksSection";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Your Tasks — GGfollows",
+  description:
+    "View and manage all the tasks you’ve created on GGfollows. Track progress, update tasks, and monitor performance.",
+  keywords: [
+    "ggfollows tasks",
+    "manage tasks",
+    "task list",
+    "growth tasks",
+    "user-created tasks",
+  ],
+  openGraph: {
+    title: "Your Tasks — GGfollows",
+    description: "See the tasks you've created and manage them easily.",
+    type: "website",
+  },
+};
+
 export default function Page() {
   return (
     <div className="flex flex-1 flex-col ">

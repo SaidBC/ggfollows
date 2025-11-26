@@ -93,7 +93,7 @@ model VerificationCode {
   code        Int
   codeExpires DateTime
   email       String
-  user        User                    @relation(fields: [email], references: [email])
+  user        User                    @relation(fields: [email], references: [email], onDelete: Cascade)
   createdAt   DateTime                @default(now())
 }
 
@@ -185,7 +185,7 @@ model Task {
   amount      Int
   platform    TaskPlatform
 
-  creator User   @relation(fields: [userId], references: [id])
+  creator User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  String
 
   completions TaskCompletion[]
