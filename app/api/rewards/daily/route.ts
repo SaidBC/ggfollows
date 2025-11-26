@@ -66,7 +66,11 @@ export async function POST(req: NextRequest) {
         balance,
       },
     });
-  } catch (err: any) {
-    return Response.json({ error: err.message }, { status: 500 });
+  } catch {
+    return fieldErrorResponse(
+      "root",
+      "An error occurred during claiming reward",
+      500
+    );
   }
 }

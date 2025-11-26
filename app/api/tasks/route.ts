@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         task,
       },
     });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, data: tasks });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }

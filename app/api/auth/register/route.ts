@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import signUpApiSchema from "@/lib/schemas/signUpApiSchema";
 import validateData from "@/utils/validateDate";
+import fieldErrorResponse from "@/utils/fieldErrorResponse";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,13 +46,11 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, data: user }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        errors: { root: "An error occurred during registration" },
-      },
-      { status: 500 }
+  } catch {
+    return fieldErrorResponse(
+      "root",
+      "An error occurred during registration",
+      500
     );
   }
 }

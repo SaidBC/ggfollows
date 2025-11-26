@@ -58,7 +58,7 @@ export default function VerifyEmailForm() {
                 </InputOTP>
               </FormControl>
               <FormDescription className="text-sm text-muted-foreground mt-4">
-                If you didn't receive the email,{" "}
+                If you didn&apos;t receive the email,{" "}
                 <Link
                   href="/resend-verification"
                   className="text-blue-500 hover:underline"

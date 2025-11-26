@@ -80,7 +80,7 @@ export async function POST(
         taskCompletion,
       },
     });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }

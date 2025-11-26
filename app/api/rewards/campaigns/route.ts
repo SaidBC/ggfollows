@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const campaigns = await prisma.rewardCampaign.findMany({ where: where });
 
     return NextResponse.json({ success: true, data: campaigns });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }

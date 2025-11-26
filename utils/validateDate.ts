@@ -1,5 +1,10 @@
+import { IErrors } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
-import { z, ZodRawShape, ZodObject, flattenError } from "zod";
+import { z, ZodRawShape, ZodObject } from "zod";
+
+interface IFieldErrors {
+  [k: string]: string[] | undefined;
+}
 
 interface SuccessState<T> {
   isSuccess: true;
@@ -10,25 +15,15 @@ interface FailureState {
   isSuccess: false;
   response: NextResponse<{
     success: false;
-    errors: {
-      [P in keyof z.core.$InferObjectOutput<any, {}>]?: {
-        message: string;
-      };
-    };
+    errors: IErrors;
   }>;
 }
 type TValidateData = <T extends ZodRawShape>(
   req: NextRequest,
   schema: ZodObject<T>
 ) => Promise<SuccessState<z.infer<ZodObject<T>>> | FailureState>;
-function transform(obj: {
-  [P in keyof z.core.$InferObjectOutput<any, {}>]?: string[] | undefined;
-}) {
-  const result: {
-    [P in keyof z.core.$InferObjectOutput<any, {}>]?: {
-      message: string;
-    };
-  } = {};
+function transform(obj: IFieldErrors) {
+  const result: IErrors = {};
 
   for (const key in obj) {
     if (Array.isArray(obj[key]) && obj[key].length > 0) {

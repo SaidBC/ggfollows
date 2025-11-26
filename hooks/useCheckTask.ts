@@ -1,7 +1,7 @@
 "use client";
 
 import apiAxios from "@/lib/apiAxios";
-import { CheckTaskResponse, UpdateUserResponse } from "@/types";
+import { CheckTaskResponse } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useCheckTask({ taskId }: { taskId: string }) {

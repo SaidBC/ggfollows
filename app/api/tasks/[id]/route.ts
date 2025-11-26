@@ -1,9 +1,7 @@
 import { earnPoints } from "@/lib/points";
 import prisma from "@/lib/prisma";
-import checkTaskSchema from "@/lib/schemas/checkTaskSchema";
 import fieldErrorResponse from "@/utils/fieldErrorResponse";
 import isAuthenticated from "@/utils/isAuthenticated";
-import validateData from "@/utils/validateDate";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(

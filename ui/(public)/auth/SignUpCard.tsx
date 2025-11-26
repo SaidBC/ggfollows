@@ -68,7 +68,7 @@ export function SignUpCard({
               });
           }
         }
-      } catch (error) {
+      } catch {
         setError("root", { message: "An error occurred during registration" });
       }
     };

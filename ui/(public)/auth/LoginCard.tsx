@@ -47,7 +47,7 @@ export function LoginCard({
           router.replace("/dashboard");
         }, 500);
       }
-    } catch (error) {
+    } catch {
       setError("root", {
         message: "An error occurred during login. Please try again.",
       });

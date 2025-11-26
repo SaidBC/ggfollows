@@ -1,5 +1,5 @@
 import { getToken, JWT } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import serverEnv from "./serverEnv";
 import fieldErrorResponse from "./fieldErrorResponse";
 

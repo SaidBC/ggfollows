@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     });
     if (!user) return fieldErrorResponse("root", "User not found", 404);
     return NextResponse.json({ success: true, data: user });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }
@@ -71,7 +71,7 @@ export async function PATCH(req: NextRequest) {
       data: allowed,
     });
     return NextResponse.json({ success: true, data: updatedUser });
-  } catch (error) {
+  } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }
