@@ -1,6 +1,8 @@
 import z from "zod";
 
 const serverEnv = z.object({
+  EMAIL_USER: z.email(),
+  EMAIL_PASS: z.string(),
   NEXTAUTH_URL: z.url(),
   NEXTAUTH_SECRET: z.string(),
 });

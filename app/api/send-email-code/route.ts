@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import sendEmailCodeReasonSchema from "@/lib/schemas/sendEmailCodeReasonSchema";
 import fieldErrorResponse from "@/utils/fieldErrorResponse";
 import isAuthenticated from "@/utils/isAuthenticated";
+import serverEnv from "@/utils/serverEnv";
 import validateData from "@/utils/validateDate";
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
@@ -42,13 +43,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: serverEnv.EMAIL_USER,
+      pass: serverEnv.EMAIL_PASS,
     },
   });
 
   await transporter.sendMail({
-    from: '"chatsphere" <noreply@chatsphere.com>',
+    from: '"GGfollows" <noreply@ggfollows.com>',
     to: user.email,
     subject: "Your verification code",
     text: `Your verification code is: ${code}`,
