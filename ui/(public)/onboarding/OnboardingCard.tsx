@@ -15,11 +15,13 @@ import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { useEffect, useMemo } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function OnboardingCard({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { update } = useSession();
   const {
     data: user,
     isLoading: userIsLoading,
@@ -47,7 +49,7 @@ export default function OnboardingCard({
     data
   ) {
     mutate(data, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         const fields = ["firstname", "lastname", "username"] as const;
         if (!data.success) {
           for (const field of fields) {
@@ -57,7 +59,10 @@ export default function OnboardingCard({
               });
           }
         }
-        if (data.success) router.push("/dashboard");
+        if (data.success) {
+          await update();
+          router.push("/dashboard");
+        }
       },
     });
   };
