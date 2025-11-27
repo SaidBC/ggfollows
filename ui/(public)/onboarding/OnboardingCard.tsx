@@ -16,6 +16,7 @@ import { useEffect, useMemo } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function OnboardingCard({
   className,
@@ -39,10 +40,15 @@ export default function OnboardingCard({
     handleSubmit,
     register,
     formState: { errors, isLoading },
-
+    reset,
     setError,
   } = useForm({
     resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      username: "",
+    },
   });
   const { mutate } = useUpdateUser();
   const onSubmit: SubmitHandler<z.output<typeof onboardingSchema>> = function (
@@ -51,6 +57,7 @@ export default function OnboardingCard({
     mutate(data, {
       onSuccess: async (data) => {
         const fields = ["firstname", "lastname", "username"] as const;
+        console.log(data);
         if (!data.success) {
           for (const field of fields) {
             if (field in data.errors)
@@ -66,17 +73,24 @@ export default function OnboardingCard({
       },
     });
   };
+
   useEffect(() => {
-    if (
-      !userIsLoading &&
-      userIsSuccess &&
-      user.firstname !== null &&
-      user.lastname !== null &&
-      user.username !== null
-    ) {
-      router.push("/dashboard");
+    if (userIsSuccess && user) {
+      const defaultData = {
+        firstname: user.firstname || user.name?.split(" ")[0] || "",
+        lastname: user.lastname || user.name?.split(" ")[1] || "",
+        username: user.username || randUsername,
+      };
+      reset(defaultData);
     }
-  }, [userIsLoading]);
+  }, [userIsSuccess, user, randUsername, reset]);
+
+  if (userIsLoading)
+    return (
+      <div className="">
+        <Spinner className="size-20 text-secondary mx-auto mt-26" />
+      </div>
+    );
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
@@ -98,9 +112,6 @@ export default function OnboardingCard({
                     id="firstname"
                     type="text"
                     placeholder="Elon"
-                    defaultValue={
-                      user?.firstname || user?.name?.split(" ")[0] || ""
-                    }
                     required
                   />
                   {errors.firstname && (
@@ -116,9 +127,6 @@ export default function OnboardingCard({
                     id="lastname"
                     type="text"
                     placeholder="Musk"
-                    defaultValue={
-                      user?.lastname || user?.name?.split(" ")[1] || ""
-                    }
                     required
                   />
                   {errors.lastname && (
@@ -135,7 +143,6 @@ export default function OnboardingCard({
                   id="username"
                   type="text"
                   placeholder="abcd123"
-                  defaultValue={user?.username || randUsername}
                   required
                 />
                 {errors.username && (
