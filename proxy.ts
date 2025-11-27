@@ -71,5 +71,13 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:path*"], // Matches all paths
+  matcher: [
+    "/dashboard/:path*",
+    "/tasks/:path*",
+    "/settings/:path*",
+    "/verify-email",
+    "/onboarding",
+    "/auth/login",
+    "/auth/signup",
+  ],
 };
