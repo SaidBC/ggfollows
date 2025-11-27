@@ -67,7 +67,7 @@ export default function OnboardingCard({
           }
         }
         if (data.success) {
-          await update();
+          await update({ user: data.data });
           router.push("/dashboard");
         }
       },

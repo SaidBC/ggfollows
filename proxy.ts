@@ -17,55 +17,56 @@ const PRIVATE_ROUTES = [
 
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: serverEnv.NEXTAUTH_SECRET });
-  const path = req.nextUrl.pathname;
-  const isAuthenticated = !!token;
-  const isProfileComplete = isAuthenticated && !!token?.username;
+  console.log(token);
+  // const path = req.nextUrl.pathname;
+  // const isAuthenticated = !!token;
+  // const isProfileComplete = isAuthenticated && !!token?.username;
 
-  // --- 1. UNAUTHENTICATED USERS: Protect Private Routes ---
-  // If accessing a private route and NO token exists, redirect to login.
-  if (
-    PRIVATE_ROUTES.some((route) => path.startsWith(route)) &&
-    !isAuthenticated
-  ) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/auth/login";
-    url.searchParams.set("callbackUrl", path);
-    return NextResponse.redirect(url);
-  }
+  // // --- 1. UNAUTHENTICATED USERS: Protect Private Routes ---
+  // // If accessing a private route and NO token exists, redirect to login.
+  // if (
+  //   PRIVATE_ROUTES.some((route) => path.startsWith(route)) &&
+  //   !isAuthenticated
+  // ) {
+  //   const url = req.nextUrl.clone();
+  //   url.pathname = "/auth/login";
+  //   url.searchParams.set("callbackUrl", path);
+  //   return NextResponse.redirect(url);
+  // }
 
-  // --- 2. AUTHENTICATED USERS: Enforce Onboarding & Redirect from Auth Pages ---
+  // // --- 2. AUTHENTICATED USERS: Enforce Onboarding & Redirect from Auth Pages ---
 
-  // A. Incomplete Profile Check (Onboarding Jail)
-  // If the user is authenticated BUT the profile is incomplete (missing username)
-  // AND they are trying to access any route other than the onboarding route,
-  // REDIRECT them to the onboarding page.
-  if (isAuthenticated && !isProfileComplete && path !== ONBOARDING_ROUTE) {
-    const url = req.nextUrl.clone();
-    url.pathname = ONBOARDING_ROUTE;
-    return NextResponse.redirect(url);
-  }
+  // // A. Incomplete Profile Check (Onboarding Jail)
+  // // If the user is authenticated BUT the profile is incomplete (missing username)
+  // // AND they are trying to access any route other than the onboarding route,
+  // // REDIRECT them to the onboarding page.
+  // if (isAuthenticated && !isProfileComplete && path !== ONBOARDING_ROUTE) {
+  //   const url = req.nextUrl.clone();
+  //   url.pathname = ONBOARDING_ROUTE;
+  //   return NextResponse.redirect(url);
+  // }
 
-  // B. Redirect from Auth Pages (If Logged In)
-  // If the user is authenticated AND the profile is complete,
-  // AND they are trying to access an Auth route (login/signup),
-  // REDIRECT them to the dashboard.
-  if (
-    isProfileComplete &&
-    AUTH_ROUTES.some((route) => path.startsWith(route))
-  ) {
-    const url = req.nextUrl.clone();
-    url.pathname = DASHBOARD_ROUTE;
-    return NextResponse.redirect(url);
-  }
+  // // B. Redirect from Auth Pages (If Logged In)
+  // // If the user is authenticated AND the profile is complete,
+  // // AND they are trying to access an Auth route (login/signup),
+  // // REDIRECT them to the dashboard.
+  // if (
+  //   isProfileComplete &&
+  //   AUTH_ROUTES.some((route) => path.startsWith(route))
+  // ) {
+  //   const url = req.nextUrl.clone();
+  //   url.pathname = DASHBOARD_ROUTE;
+  //   return NextResponse.redirect(url);
+  // }
 
-  // C. Block /onboarding if profile is complete
-  // If the user is fully onboarded and tries to access the onboarding page,
-  // redirect them away.
-  if (isProfileComplete && path === ONBOARDING_ROUTE) {
-    const url = req.nextUrl.clone();
-    url.pathname = DASHBOARD_ROUTE;
-    return NextResponse.redirect(url);
-  }
+  // // C. Block /onboarding if profile is complete
+  // // If the user is fully onboarded and tries to access the onboarding page,
+  // // redirect them away.
+  // if (isProfileComplete && path === ONBOARDING_ROUTE) {
+  //   const url = req.nextUrl.clone();
+  //   url.pathname = DASHBOARD_ROUTE;
+  //   return NextResponse.redirect(url);
+  // }
 
   return NextResponse.next();
 }
