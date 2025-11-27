@@ -40,6 +40,7 @@ export default function AppSidebar({
           username={user?.username || "ggfollows"}
           email={user?.email || "gg.mail.com"}
           isLoading={isLoading}
+          profileImageUrl={user?.image || undefined}
         />
         <PointsView amount={user?.points || 0} isLoading={isLoading} />
         <Separator />

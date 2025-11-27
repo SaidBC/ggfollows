@@ -1,12 +1,15 @@
 import z from "zod";
 import emailSchema from "./emailSchema";
 import passwordSchema from "./passwordSchema";
+import usernameSchema from "./usernameSchema";
+import firstnameSchema from "./firstnameSchema";
+import lastnameSchema from "./lastnameSchema";
 
 const signUpSchema = z
   .object({
-    firstname: z.string(),
-    lastname: z.string(),
-    username: z.string(),
+    firstname: firstnameSchema,
+    lastname: lastnameSchema,
+    username: usernameSchema,
     email: emailSchema,
     password: passwordSchema,
     confirm_password: z.string({
