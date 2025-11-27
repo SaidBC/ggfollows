@@ -21,8 +21,20 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const userId = searchParams.get("userId");
     if (userId !== null) {
+      if (user.id !== userId && user.role !== "ADMIN")
+        return fieldErrorResponse(
+          "root",
+          "Cannot access other users transactions",
+          400
+        );
       where.userId = user.id;
     }
+    if (userId === null && user.role !== "ADMIN")
+      return fieldErrorResponse(
+        "root",
+        "Cannot view all application transactions",
+        400
+      );
     const transactions = await prisma.pointTransaction.findMany({
       where: where,
     });

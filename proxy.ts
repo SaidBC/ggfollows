@@ -17,7 +17,6 @@ const PRIVATE_ROUTES = [
 
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: serverEnv.NEXTAUTH_SECRET });
-  console.log(token);
   const path = req.nextUrl.pathname;
   const isAuthenticated = !!token;
   const isProfileComplete = isAuthenticated && !!token?.username;

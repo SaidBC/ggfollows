@@ -12,30 +12,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import PointsIcon from "@/components/vectors/PointIcon";
-import { useGetTransactions } from "@/hooks/useGetTransaction";
+import { useGetUserTransactions } from "@/hooks/useGetTransaction";
+import { useSession } from "next-auth/react";
 
-const data = [
-  {
-    id: "dajlqmw123981jda",
-    status: "success",
-    from: "following",
-    amount: 20,
-    createdAt: "Sat Nov 15 2025 00:28:29 GMT+0100 (GMT+01:00)",
-  },
-];
-
-interface TableSectionProps {
-  data: {
-    id: "dajlqmw123981jda";
-    type: "SPEND" | "EARN";
-    from: string;
-    amount: 20;
-    createdAt: string;
-  }[];
-}
-
-export default function TableSection({}: TableSectionProps) {
-  const { data, isLoading, error } = useGetTransactions();
+export default function TableSection() {
+  const { status, data: sessionData } = useSession();
+  const userId = sessionData?.user.id;
+  const { data, isLoading, error } = useGetUserTransactions({
+    userId,
+  });
   if (error) return <p>Error loading transactions</p>;
   if (!isLoading && (!data || !data.success))
     return <p>Error loading transactions</p>;
@@ -97,11 +82,12 @@ export default function TableSection({}: TableSectionProps) {
           />
         </div>
       )}
-      {isLoading && (
-        <div className="w-full py-8">
-          <Spinner className="size-16 text-secondary mx-auto" />
-        </div>
-      )}
+      {isLoading ||
+        (status === "loading" && (
+          <div className="w-full py-8">
+            <Spinner className="size-16 text-secondary mx-auto" />
+          </div>
+        ))}
     </div>
   );
 }
