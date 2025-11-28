@@ -17,7 +17,7 @@ export default function SocialLogin() {
   const [error, setError] = useState<string | null>(null);
 
   async function handleLogin(provider: LiteralUnion<BuiltInProviderType>) {
-    if (provider !== "facebook")
+    if (provider !== "google")
       return setError(
         "This login method not supported for now try with google"
       );
