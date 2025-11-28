@@ -19,7 +19,7 @@ export default function SocialLogin() {
   async function handleLogin(provider: LiteralUnion<BuiltInProviderType>) {
     if (provider !== "google")
       return setError(
-        "This login method not supported for now try with google"
+        "This login method not supported for now, Try with google"
       );
     try {
       setLoadingProvider(provider);
@@ -78,7 +78,7 @@ export default function SocialLogin() {
         )}
         <span className="sr-only">Login with Meta</span>
       </Button>
-      {error && <ErrorText message={error} />}
+      {error && <ErrorText className="col-start-1 col-end-4" message={error} />}
     </div>
   );
 }
