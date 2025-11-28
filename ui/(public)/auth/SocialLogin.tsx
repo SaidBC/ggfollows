@@ -2,24 +2,31 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
+import { LiteralUnion, signIn } from "next-auth/react";
 import { Spinner } from "@/components/ui/spinner";
 import {
   IconBrandApple,
   IconBrandGoogle,
   IconBrandMeta,
 } from "@tabler/icons-react";
+import { BuiltInProviderType } from "next-auth/providers/index";
+import ErrorText from "@/components/ErrorText";
 
 export default function SocialLogin() {
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleLogin(provider: string) {
+  async function handleLogin(provider: LiteralUnion<BuiltInProviderType>) {
+    if (provider !== "facebook")
+      return setError(
+        "This login method not supported for now try with google"
+      );
     try {
       setLoadingProvider(provider);
-      await signIn(provider, {
+      const res = await signIn(provider, {
         callbackUrl: "/dashboard",
       });
+      if (res && res.error) return setError(res.error);
     } finally {
       setLoadingProvider(null);
     }
@@ -71,6 +78,7 @@ export default function SocialLogin() {
         )}
         <span className="sr-only">Login with Meta</span>
       </Button>
+      {error && <ErrorText message={error} />}
     </div>
   );
 }
