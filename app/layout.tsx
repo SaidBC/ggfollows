@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AuthSessionProvider from "@/providers/AuthSessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
+import GoogleAnalytics from "@/ui/GoogleAnalytics";
 
 const kablammo = Kablammo({
   variable: "--font-kablammo",
@@ -46,6 +47,7 @@ export default async function RootLayout({
         <AuthSessionProvider session={session}>
           <QueryProvider>{children}</QueryProvider>
         </AuthSessionProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );
