@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import AuthSessionProvider from "@/providers/AuthSessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
 import GoogleAnalytics from "@/ui/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/next";
 
 const kablammo = Kablammo({
   variable: "--font-kablammo",
@@ -48,6 +49,7 @@ export default async function RootLayout({
           <QueryProvider>{children}</QueryProvider>
         </AuthSessionProvider>
         <GoogleAnalytics />
+        <Analytics />
       </body>
     </html>
   );
