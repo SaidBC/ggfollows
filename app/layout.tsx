@@ -7,6 +7,7 @@ import AuthSessionProvider from "@/providers/AuthSessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
 import GoogleAnalytics from "@/ui/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/next";
+import clientEnv from "@/utils/clientEnv";
 
 const kablammo = Kablammo({
   variable: "--font-kablammo",
@@ -48,8 +49,8 @@ export default async function RootLayout({
         <AuthSessionProvider session={session}>
           <QueryProvider>{children}</QueryProvider>
         </AuthSessionProvider>
-        <GoogleAnalytics />
-        <Analytics />
+        {clientEnv.NEXT_PUBLIC_NODE_ENV === "production" && <GoogleAnalytics />}
+        {clientEnv.NEXT_PUBLIC_NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );
