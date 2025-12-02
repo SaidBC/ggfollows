@@ -21,7 +21,7 @@ export default function HeroSection() {
           <br /> no bots, just real people helping each other.
         </p>
         <Button variant={"secondary"} size="lg" asChild>
-          <Link href={"/signup"}>Get Started</Link>
+          <Link href={"/auth/signup"}>Get Started</Link>
         </Button>
       </div>
       <div className="p-8">
