@@ -3,6 +3,7 @@ import HowItWorksSection from "@/ui/(public)/Home/HowItWorksSection";
 import FaqSection from "@/ui/(public)/Home/FaqSection";
 
 import { Metadata } from "next";
+import clientEnv from "@/utils/clientEnv";
 
 export const metadata: Metadata = {
   title: "GGfollows — Grow Your Social Media Faster with Real Engagement",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     title: "GGfollows — Grow Your Social Media Faster",
     description:
       "Earn points, complete tasks, and boost your reach effortlessly with GGfollows.",
-    url: "https://ggfollows.com",
+    url: clientEnv.NEXT_PUBLIC_URL,
     siteName: "GGfollows",
     type: "website",
   },

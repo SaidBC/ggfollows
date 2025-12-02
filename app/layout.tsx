@@ -31,12 +31,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(clientEnv.NEXT_PUBLIC_URL),
   icons: {
     icon: "/favicon.ico",
   },
+  keywords: [
+    "social media growth",
+    "Facebook engagement",
+    "YouTube subscribers",
+    "Instagram growth",
+    "earn rewards",
+    "campaigns",
+    "follow for follow website",
+    "exchange follows",
+    "follow back",
+  ],
   alternates: {
-    canonical: "https://ggfollows.vercel.app",
+    canonical: clientEnv.NEXT_PUBLIC_URL,
   },
+  authors: [{ name: "GGfollows" }],
+  creator: "GGfollows",
+  publisher: "GGfollows",
   other: {
     "application-name": "GGfollows",
   },
