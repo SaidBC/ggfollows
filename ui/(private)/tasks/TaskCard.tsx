@@ -22,10 +22,10 @@ type TaskCardProps = {
 
 export default function TaskCard(task: TaskCardProps) {
   return (
-    <div className="bg-card text-card-foreground flex flex-col md:flex-row justify-between rounded-xl border py-4 shadow-sm @container/card from-secondary/5 to-card dark:bg-card bg-linear-to-t px-4 ">
-      <div className="flex flex-col md:flex-row md:items-center  gap-4">
-        <div className="px-4 self-center py-2 md:py-0">
-          <task.icon className="size-28 md:size-20" />
+    <div className="bg-card text-card-foreground flex flex-col @[48rem]/main:flex-row justify-between rounded-xl border py-4 shadow-sm @container/card from-secondary/5 to-card dark:bg-card bg-linear-to-t px-4 ">
+      <div className="flex flex-col @[48rem]/main:flex-row @[48rem]/main:items-center gap-4 ">
+        <div className="px-4 self-center py-2 @[48rem]/main:py-0">
+          <task.icon className="size-28 @[48rem]/main:size-20" />
         </div>
         <div>
           <h2 className="text-xl font-bold">{task.title}</h2>
@@ -37,9 +37,9 @@ export default function TaskCard(task: TaskCardProps) {
           )}
         </div>
       </div>
-      <div className="flex justify-between md:flex-col-reverse gap-2">
+      <div className="flex justify-between @[48rem]/main:flex-col-reverse gap-2">
         {task.view === "CLIENT" ? (
-          <div className="flex md:flex-row-reverse flex-wrap items-center gap-4">
+          <div className="flex @[48rem]/main:flex-row-reverse items-center flex-wrap  gap-4">
             <CheckTask taskId={task.id} />
             <Link
               className="flex items-center gap-1 text-sm hover:underline"
