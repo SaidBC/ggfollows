@@ -50,8 +50,8 @@ export default function CheckTask({ taskId }: { taskId: string }) {
         </Button>
       )}
       {checking && (
-        <div className="flex items-center gap-2">
-          <div className="flex gap-2">
+        <div className="flex items-end gap-2">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="platformUsername">Platform username:</Label>
             <Input
               id="platformUsername"
@@ -65,7 +65,7 @@ export default function CheckTask({ taskId }: { taskId: string }) {
             disabled={isPending}
             onClick={onSubmit}
             variant="secondary"
-            className="grow-1"
+            className="grow"
           >
             {!isPending && <span>Confirm</span>}
             {isPending && (
