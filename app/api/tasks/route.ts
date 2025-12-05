@@ -63,6 +63,9 @@ export async function GET(req: NextRequest) {
     const where: Prisma.TaskWhereInput = {};
     const { searchParams } = req.nextUrl;
 
+    const userId = searchParams.get("userId");
+    if (userId) where.userId = userId;
+
     const tasks = await prisma.task.findMany({
       where: where,
       include: {

@@ -6,7 +6,7 @@ import siteConfig from "@/lib/siteConfig";
 
 export default function TasksList() {
   const platforms = siteConfig.platforms;
-  const { data, error } = useGetTasks({ creator: undefined });
+  const { data, error } = useGetTasks({ userId: undefined });
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
   const tasks = data.data;

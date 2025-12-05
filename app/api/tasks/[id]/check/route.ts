@@ -29,7 +29,7 @@ export async function POST(
         id: true,
         amount: true,
         allowsMultiAccount: true,
-        creator: { select: { id: true } },
+        userId: true,
         _count: {
           select: {
             completions: {
@@ -51,7 +51,7 @@ export async function POST(
       },
     });
     if (!task) return fieldErrorResponse("root", "Task not found", 404);
-    if (task.creator.id === user.id)
+    if (task.userId === user.id)
       return fieldErrorResponse("root", "You cannot check your own task", 400);
     if (task._count.completions > 0 && !task.allowsMultiAccount)
       return fieldErrorResponse(

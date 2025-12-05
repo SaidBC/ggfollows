@@ -2,8 +2,8 @@ import apiTanstack from "@/lib/apiTanstack";
 import { GetTasksResponse } from "@/types";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function useGetTasks({ creator }: { creator?: string }) {
-  const query = creator ? `creator=${creator}` : "";
+export function useGetTasks({ userId }: { userId?: string }) {
+  const query = userId ? `userId=${userId}` : "";
 
   return useSuspenseQuery({
     queryKey: ["tasks", query],

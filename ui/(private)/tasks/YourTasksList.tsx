@@ -19,7 +19,7 @@ export default function YourTasksList() {
   const session = useSession();
 
   const { data, error } = useGetTasks({
-    creator: session.data?.user.id || undefined,
+    userId: session.data?.user.id || undefined,
   });
   console.log(data);
   if (!data || !data.success || error)

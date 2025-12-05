@@ -21,6 +21,7 @@ export async function DELETE(
     const task = await prisma.task.findUnique({
       where: { id: taskId },
       select: {
+        userId: true,
         id: true,
         amount: true,
         quantity: true,
@@ -36,6 +37,8 @@ export async function DELETE(
       },
     });
     if (!task) return fieldErrorResponse("root", "Task not found", 404);
+    if (user.role !== "ADMIN" && task.userId !== user.id)
+      return fieldErrorResponse("root", "Unauthorized", 403);
     await prisma.task.delete({
       where: {
         id: task.id,
