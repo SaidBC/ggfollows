@@ -8,6 +8,7 @@ import { useCheckTask } from "@/hooks/useCheckTask";
 import checkTaskSchema from "@/lib/schemas/checkTaskSchema";
 import { IconX } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
+import z from "zod";
 
 export default function CheckTask({ taskId }: { taskId: string }) {
   const [checking, setChecking] = useState(false);
@@ -26,8 +27,13 @@ export default function CheckTask({ taskId }: { taskId: string }) {
     const validatedData = checkTaskSchema.safeParse({
       platformUsername: inputValue,
     });
+
     if (!validatedData.success)
-      return setError({ message: validatedData.error.message });
+      return setError({
+        message:
+          z.flattenError(validatedData.error).fieldErrors
+            .platformUsername?.[0] || "Invalid platform username",
+      });
     mutate(validatedData.data, {
       onSuccess: (res) => {
         if (!res.success) {

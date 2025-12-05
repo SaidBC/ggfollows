@@ -15,17 +15,32 @@ import { Spinner } from "@/components/ui/spinner";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useClaimDailyReward } from "@/hooks/useClaimDailyReward";
 import { useDailyReward } from "@/hooks/useDailyRewardStatus";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function DailyRewardCard() {
   const { data, error } = useDailyReward();
-  if (!data || !data.success || error)
-    return <p>An Error occures durring fetching</p>;
   const {
     mutate,
     isPending,
     isSuccess,
     error: claimError,
   } = useClaimDailyReward();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("You successfully claimed 20 points!");
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (claimError) {
+      toast.error(claimError.message);
+    }
+  }, [claimError]);
+
+  if (!data || !data.success || error)
+    return <p>An Error occures durring fetching</p>;
   return (
     <Card>
       <CardHeader>
@@ -39,7 +54,7 @@ export default function DailyRewardCard() {
 
             <Button
               onClick={() => mutate()}
-              disabled={data.data.claimed}
+              disabled={data.data.claimed || isPending}
               variant={"secondary"}
             >
               {!isPending ? (
@@ -65,10 +80,6 @@ export default function DailyRewardCard() {
         <div className="text-muted-foreground">
           Claim your daily reward & come back tomorrow
         </div>
-        {isSuccess && (
-          <p className="text-green-600 mt-2">Reward claimed successfully!</p>
-        )}
-        {claimError && <ErrorText message={claimError.message as string} />}
       </CardFooter>
     </Card>
   );

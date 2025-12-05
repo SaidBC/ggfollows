@@ -17,8 +17,9 @@ import PointsIcon from "@/components/vectors/PointIcon";
 import { useCreateTask } from "@/hooks/useCreateTask";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 export default function CreateTaskForm() {
@@ -35,7 +36,6 @@ export default function CreateTaskForm() {
     resolver: zodResolver(createTaskSchema),
     defaultValues: { allowMultiAccounts: "false" },
   });
-  const [isSuccess, setIsSuccess] = useState(false);
   const onSubmit = async function (data: z.output<typeof createTaskSchema>) {
     try {
       mutate(data, {
@@ -58,7 +58,7 @@ export default function CreateTaskForm() {
             }
             return;
           }
-          setIsSuccess(true);
+          toast.success("Task created successfully!");
           reset();
         },
       });
@@ -68,6 +68,12 @@ export default function CreateTaskForm() {
       });
     }
   };
+
+  useEffect(() => {
+    if (errors.root)
+      toast.error(errors.root.message || "An expected error occured");
+  }, [errors]);
+
   const amount = watch("amount");
   const quantity = watch("quantity");
 
@@ -238,11 +244,6 @@ export default function CreateTaskForm() {
           <ErrorText
             message={errors.root.message || "An expected error occured"}
           />
-        )}
-        {isSuccess && (
-          <p className="text-green-600 font-bold mt-2">
-            Task created successfully!
-          </p>
         )}
       </div>
     </form>

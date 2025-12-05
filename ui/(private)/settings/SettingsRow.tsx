@@ -5,6 +5,7 @@ import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ErrorText from "@/components/ErrorText";
+import { toast } from "sonner";
 
 interface Props {
   label: string;
@@ -35,7 +36,21 @@ export default function SettingRow({
     mutate(
       { [field]: inputValue },
       {
-        onSuccess: () => setEditing(false),
+        onSuccess: (res) => {
+          if (res.success) {
+            setEditing(false);
+            return toast.success(`${label} updated successfully!`);
+          } else {
+            toast.error(
+              (!res.success && res.errors[field]?.message) ||
+                res.errors.root?.message ||
+                "Unexpected error occured"
+            );
+          }
+        },
+        onError: () => {
+          toast.error(`Failed to update ${label}. Please try again.`);
+        },
       }
     );
   };
@@ -61,7 +76,7 @@ export default function SettingRow({
             disabled={isPending}
             onClick={onSubmit}
             variant="secondary"
-            className="grow-1"
+            className="grow"
           >
             Confirm
           </Button>
@@ -76,9 +91,6 @@ export default function SettingRow({
             Cancel
           </Button>
         </div>
-      )}
-      {isSuccess && data.success && (
-        <p className="text-green-600 mt-2">{label} updated successfully!</p>
       )}
       {isSuccess && !data.success && (
         <ErrorText
