@@ -57,7 +57,6 @@ export default function OnboardingCard({
     mutate(data, {
       onSuccess: async (data) => {
         const fields = ["firstname", "lastname", "username"] as const;
-        console.log(data);
         if (!data.success) {
           for (const field of fields) {
             if (field in data.errors)

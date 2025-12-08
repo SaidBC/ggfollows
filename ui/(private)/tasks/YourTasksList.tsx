@@ -21,7 +21,6 @@ export default function YourTasksList() {
   const { data, error } = useGetTasks({
     userId: session.data?.user.id || undefined,
   });
-  console.log(data);
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
   const tasks = data.data;
