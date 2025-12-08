@@ -49,7 +49,7 @@ export default function Page() {
 
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           <CardsSection />
-          <div className="w-full py-4 justify-center hidden @[728px]/main:flex">
+          <div className="w-full py-4 justify-center flex">
             <AdBanner
               delay={1000}
               className=" @[728px]/main:w-[728px] @[728px]/main:h-[90px] @[468px]/main:w-[468px] @[468px]/main:h-[60px] w-[320px] h-[50px]"
