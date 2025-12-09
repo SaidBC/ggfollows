@@ -1,11 +1,14 @@
 import { getBalance, spendPoints } from "@/lib/points";
 import prisma from "@/lib/prisma";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
+import siteConfig from "@/lib/siteConfig";
 import fieldErrorResponse from "@/utils/fieldErrorResponse";
 import isAuthenticated from "@/utils/isAuthenticated";
 import validateData from "@/utils/validateDate";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+
+const DEFAULT_LIMIT = siteConfig.DEFAULT_LIMIT;
 
 export async function POST(req: NextRequest) {
   try {
@@ -61,13 +64,33 @@ export async function GET(req: NextRequest) {
     if (!auth.isSuccess) return auth.response;
 
     const where: Prisma.TaskWhereInput = {};
+    let take: number | undefined = DEFAULT_LIMIT;
+    let skip: number | undefined;
+
     const { searchParams } = req.nextUrl;
-
     const userId = searchParams.get("userId");
-    if (userId) where.userId = userId;
+    const page = searchParams.get("page");
+    const limit = searchParams.get("limit");
 
+    if (page) {
+      const pageValue = parseInt(page);
+      if (isNaN(pageValue) || pageValue < 0)
+        return fieldErrorResponse("root", "Invalid page value", 400);
+      skip = (pageValue - 1) * parseInt(limit ?? String(DEFAULT_LIMIT));
+    }
+    if (limit) {
+      const limitValue = parseInt(limit);
+      if (isNaN(limitValue) || limitValue <= 0)
+        return fieldErrorResponse("root", "Invalid take value", 400);
+      take = limitValue;
+    }
+
+    if (userId) where.userId = userId;
+    const total = await prisma.task.count({ where });
     const tasks = await prisma.task.findMany({
       where: where,
+      take,
+      skip,
       include: {
         creator: {
           select: {
@@ -82,7 +105,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, data: tasks });
+    return NextResponse.json({ success: true, data: { tasks, total } });
   } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }

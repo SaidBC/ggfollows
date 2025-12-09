@@ -2,10 +2,21 @@ import apiTanstack from "@/lib/apiTanstack";
 import { GetTransactionsResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
-export function useGetUserTransactions({ userId }: { userId?: string }) {
-  const url = `/transactions?userId=${userId}`;
+export function useGetUserTransactions({
+  userId,
+  page,
+}: {
+  userId?: string;
+  page?: number;
+}) {
+  const pageQuery = page ? `page=${page}` : "";
+  const userIdQuery = userId ? `userId=${userId}` : "";
+  const queries = `${userIdQuery}&${pageQuery}`;
+
+  const url = `/transactions?${queries}`;
+
   return useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", userId, page],
     queryFn: async () => {
       const data = await apiTanstack<GetTransactionsResponse>(url);
       return data;

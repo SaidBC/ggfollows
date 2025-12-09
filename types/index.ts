@@ -64,7 +64,7 @@ export type GetCampaignsResponse =
   | FieldsErrorResponse;
 
 export type GetTransactionsResponse =
-  | ResponseSuccess<PointTransaction[]>
+  | ResponseSuccess<{ transactions: PointTransaction[]; total: number }>
   | FieldsErrorResponse;
 
 export type TasksWithCompletions = (Task & {
@@ -75,7 +75,7 @@ export type TasksWithCompletions = (Task & {
 })[];
 
 export type GetTasksResponse =
-  | ResponseSuccess<TasksWithCompletions>
+  | ResponseSuccess<{ tasks: TasksWithCompletions; total: number }>
   | FieldsErrorResponse;
 
 export type ClaimDailyRewardResponse =

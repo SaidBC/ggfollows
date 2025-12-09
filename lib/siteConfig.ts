@@ -11,6 +11,7 @@ import {
 } from "@tabler/icons-react";
 
 const siteConfig = {
+  DEFAULT_LIMIT: 5,
   publicNavLinks: [
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },

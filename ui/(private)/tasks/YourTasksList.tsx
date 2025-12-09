@@ -12,22 +12,30 @@ import Link from "next/link";
 import { useGetTasks } from "@/hooks/useGetTasks";
 import { useSession } from "next-auth/react";
 import siteConfig from "@/lib/siteConfig";
+import MainPagination from "@/components/MainPagination";
+import { useSearchParams } from "next/navigation";
 
 export default function YourTasksList() {
+  const PAGE_PARAM = "user-tasks-page";
   const platform = siteConfig.platforms;
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get(PAGE_PARAM) ?? "0") || 1;
 
   const session = useSession();
 
   const { data, error } = useGetTasks({
     userId: session.data?.user.id || undefined,
+    page,
   });
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
   const tasks = data.data;
 
+  const lastPage = Math.ceil((tasks?.total || 0) / siteConfig.DEFAULT_LIMIT);
+
   return (
     <div className="flex flex-col gap-4">
-      {tasks.map((task) => (
+      {tasks.tasks.map((task) => (
         <TaskCard
           key={task.id}
           title={task.title}
@@ -42,7 +50,7 @@ export default function YourTasksList() {
           creator={task.creator}
         />
       ))}
-      {tasks.length === 0 && (
+      {tasks.total === 0 && (
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -59,6 +67,13 @@ export default function YourTasksList() {
             </Button>
           </div>
         </Empty>
+      )}
+      {Boolean(tasks.total) && (
+        <MainPagination
+          page={page}
+          lastPage={lastPage}
+          paramPage={PAGE_PARAM}
+        />
       )}
     </div>
   );

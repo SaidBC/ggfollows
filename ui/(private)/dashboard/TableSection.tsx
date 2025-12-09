@@ -1,5 +1,6 @@
 "use client";
 import EmptyListMessage from "@/components/EmptyListMessage";
+import MainPagination from "@/components/MainPagination";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -13,18 +14,26 @@ import {
 } from "@/components/ui/table";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useGetUserTransactions } from "@/hooks/useGetTransaction";
+import siteConfig from "@/lib/siteConfig";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 export default function TableSection() {
   const { status, data: sessionData } = useSession();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") ?? "0") || 1;
   const userId = sessionData?.user.id;
   const { data, isLoading, error } = useGetUserTransactions({
     userId,
+    page,
   });
   if (error) return <p>Error loading transactions</p>;
   if (!isLoading && (!data || !data.success))
     return <p>Error loading transactions</p>;
   const transactions = data ? (data.success ? data.data : null) : null;
+  const lastPage = Math.ceil(
+    (transactions?.total || 0) / siteConfig.DEFAULT_LIMIT
+  );
 
   return (
     <div className="px-4 lg:px-6 w-full">
@@ -44,7 +53,7 @@ export default function TableSection() {
         </TableHeader>
         <TableBody>
           {transactions &&
-            transactions.map((transaction) => {
+            transactions.transactions.map((transaction) => {
               const date = new Date(transaction.createdAt);
               const formatedDate = date.toUTCString();
               return (
@@ -73,7 +82,8 @@ export default function TableSection() {
             })}
         </TableBody>
       </Table>
-      {transactions && transactions.length === 0 && (
+      <MainPagination page={page} lastPage={lastPage} />
+      {transactions && transactions.total === 0 && (
         <div className=" ">
           <EmptyListMessage
             className="@xl/main:flex-row @xl/main:text-left"
