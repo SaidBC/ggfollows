@@ -45,7 +45,7 @@ export default function TableSection() {
         <TableHeader>
           <TableRow>
             <TableHead>Id</TableHead>
-            <TableHead>Type</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="text-right">Amount</TableHead>
