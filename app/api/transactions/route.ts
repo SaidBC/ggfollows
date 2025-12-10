@@ -41,16 +41,14 @@ export async function GET(req: NextRequest) {
       take = limitValue;
     }
 
-    if (user.role === "ADMIN") {
-      if (userId !== null) {
-        if (user.id !== userId && user.role !== "ADMIN")
-          return fieldErrorResponse(
-            "root",
-            "Cannot access other users transactions",
-            400
-          );
-        where.userId = user.id;
-      }
+    if (userId !== null) {
+      if (user.id !== userId && user.role !== "ADMIN")
+        return fieldErrorResponse(
+          "root",
+          "Cannot access other users transactions",
+          400
+        );
+      where.userId = user.id;
     }
     if (userId === null && user.role !== "ADMIN")
       return fieldErrorResponse(
