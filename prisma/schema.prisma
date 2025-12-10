@@ -38,6 +38,7 @@ enum TaskPlatform {
   INSTAGRAM
   YOUTUBE
   X
+  TIKTOK
 }
 
 enum TaskCompletionStatus {

@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useCreateTask } from "@/hooks/useCreateTask";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
+import siteConfig from "@/lib/siteConfig";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -124,9 +125,22 @@ export default function CreateTaskForm() {
                     <SelectValue placeholder="platforms" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FACEBOOK">Facebook</SelectItem>
-                    <SelectItem value="YOUTUBE">Youtube</SelectItem>
-                    <SelectItem value="INSTAGRAM">Instagram</SelectItem>
+                    <SelectItem className="flex gap-2" value="FACEBOOK">
+                      <siteConfig.platforms.FACEBOOK.icon />
+                      <span>Facebook</span>
+                    </SelectItem>
+                    <SelectItem className="flex gap-2" value="YOUTUBE">
+                      <siteConfig.platforms.YOUTUBE.icon />
+                      <span>Youtube</span>
+                    </SelectItem>
+                    <SelectItem className="flex gap-2" value="INSTAGRAM">
+                      <siteConfig.platforms.INSTAGRAM.icon />
+                      <span>Instagram</span>
+                    </SelectItem>
+                    <SelectItem className="flex gap-2" value="TIKTOK">
+                      <siteConfig.platforms.TIKTOK.icon />
+                      <span>Tiktok</span>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               )}

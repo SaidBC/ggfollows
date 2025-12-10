@@ -2,6 +2,7 @@ import {
   IconAppWindow,
   IconBrandFacebook,
   IconBrandInstagram,
+  IconBrandTiktok,
   IconBrandX,
   IconBrandYoutube,
   IconChecklist,
@@ -123,6 +124,10 @@ const siteConfig = {
     YOUTUBE: {
       icon: IconBrandYoutube,
       hostnames: ["youtube.com"],
+    },
+    TIKTOK: {
+      icon: IconBrandTiktok,
+      hostnames: ["tiktok.com"],
     },
   },
 };
