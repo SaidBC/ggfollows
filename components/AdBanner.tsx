@@ -171,7 +171,7 @@ export default function AdBanner({
       )}
       {isBlocked && (
         <div className={containerClass}>
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-sm text-muted-foreground bg-white">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-sm text-muted-foreground bg-card">
             <p className="font-medium">Ad blocked 🙁</p>
             <p className="text-xs opacity-70 mt-1">
               Please consider disabling your ad blocker — it helps support

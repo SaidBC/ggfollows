@@ -3,6 +3,7 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import PointsIcon from "@/components/vectors/PointIcon";
+import formatNumber from "@/utils/formatNumber";
 
 export default function PointsView({
   amount,
@@ -19,10 +20,12 @@ export default function PointsView({
       </div>
 
       {open && (
-        <span className="flex items-center gap-2">
-          <span>Points amount : </span>
+        <span className="flex items-center gap-2 text-sm ">
+          <span>Points amount :</span>
           {!isLoading ? (
-            <span className="text-secondary font-bold">{amount}</span>
+            <span className="text-secondary font-bold">
+              {formatNumber(amount)}
+            </span>
           ) : (
             <Skeleton className="w-6 h-4 bg-secondary" />
           )}
