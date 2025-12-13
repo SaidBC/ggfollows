@@ -1,4 +1,3 @@
-import AdBanner from "@/components/AdBanner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/ui/(private)/AppSidebar";
 import Header from "@/ui/(private)/Header";

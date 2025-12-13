@@ -1,6 +1,7 @@
 import AdBanner from "@/components/AdBanner";
 import CardsSection from "@/ui/(private)/dashboard/CardsSection";
 import TableSection from "@/ui/(private)/dashboard/TableSection";
+import clientEnv from "@/utils/clientEnv";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -31,17 +32,17 @@ export default function Page() {
               {
                 width: 728,
                 height: 90,
-                apiKey: "5922cf05db95ce5f2e6bb13918b56feb",
+                apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_720X90_API_KEY,
               },
               {
                 width: 468,
                 height: 60,
-                apiKey: "01a7399d046202228baec3158d6f4e5e",
+                apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_468X60_API_KEY,
               },
               {
                 width: 320,
                 height: 50,
-                apiKey: "bd3fffde54ead22ad5dfab98c2053adf",
+                apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_320X50_API_KEY,
               },
             ]}
           />
@@ -57,17 +58,17 @@ export default function Page() {
                 {
                   width: 728,
                   height: 90,
-                  apiKey: "5922cf05db95ce5f2e6bb13918b56feb",
+                  apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_720X90_API_KEY,
                 },
                 {
                   width: 468,
                   height: 60,
-                  apiKey: "01a7399d046202228baec3158d6f4e5e",
+                  apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_468X60_API_KEY,
                 },
                 {
                   width: 320,
                   height: 50,
-                  apiKey: "bd3fffde54ead22ad5dfab98c2053adf",
+                  apiKey: clientEnv.NEXT_PUBLIC_ADSTERRA_BANNER_320X50_API_KEY,
                 },
               ]}
             />
