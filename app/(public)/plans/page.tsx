@@ -1,4 +1,5 @@
 import ComingSoonPage from "@/components/ComingSoonPage";
+import PlansCards from "@/ui/(public)/plans/PlansCards";
 
 import { Metadata } from "next";
 
@@ -24,7 +25,10 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div>
-      <ComingSoonPage />
+      {/* <ComingSoonPage /> */}
+      <div className="flex justify-center items-center text-center">
+        <PlansCards />
+      </div>
     </div>
   );
 }
