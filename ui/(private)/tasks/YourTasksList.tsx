@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import siteConfig from "@/lib/siteConfig";
 import MainPagination from "@/components/MainPagination";
 import { useSearchParams } from "next/navigation";
+import TasksLimit from "../TasksLimit";
 
 export default function YourTasksList() {
   const PAGE_PARAM = "user-tasks-page";
@@ -75,6 +76,7 @@ export default function YourTasksList() {
           paramPage={PAGE_PARAM}
         />
       )}
+      <TasksLimit />
     </div>
   );
 }

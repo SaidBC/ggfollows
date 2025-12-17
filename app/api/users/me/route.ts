@@ -17,7 +17,16 @@ export async function GET(req: NextRequest) {
       },
     });
     if (!user) return fieldErrorResponse("root", "User not found", 404);
-    return NextResponse.json({ success: true, data: user });
+    const now = new Date();
+    const isNewDay =
+      !user.lastTaskCreatedAt ||
+      user.lastTaskCreatedAt.toDateString() !== now.toDateString();
+
+    const displayCount = isNewDay ? 0 : user.dailyTasksCreatedCount;
+    return NextResponse.json({
+      success: true,
+      data: { ...user, dailyTasksCreatedCount: displayCount },
+    });
   } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }

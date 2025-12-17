@@ -130,6 +130,16 @@ const siteConfig = {
       hostnames: ["tiktok.com"],
     },
   },
+  TASK_DAILY_LIMITS: {
+    FREE: 3,
+    PREMIUM: 10,
+    PRO: 50,
+  },
+  TASK_ACTIVE_LIMITS: {
+    FREE: 5,
+    PREMIUM: 20,
+    PRO: 100,
+  },
 };
 
 export default siteConfig;

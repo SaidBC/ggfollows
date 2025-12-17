@@ -131,6 +131,9 @@ model User {
   createdTasks    Task[] // Tasks created by this user
   taskCompletions TaskCompletion[] // Tasks completed by this user
 
+  dailyTasksCreatedCount Int       @default(0)
+  lastTaskCreatedAt      DateTime?
+
   currentStreak       Int       @default(0)
   lastDailyRewardDate DateTime?
 }
