@@ -41,6 +41,12 @@ enum TaskPlatform {
   TIKTOK
 }
 
+enum PlanType {
+  FREE
+  PREMIUM
+  PRO
+}
+
 enum TaskCompletionStatus {
   PENDING // User submitted the completion proof
   VERIFIED // System/Admin confirmed the completion and rewarded points
@@ -112,6 +118,7 @@ model User {
   emailVerified DateTime?
   image         String?
   bio           String?   @db.Text
+  plan          PlanType  @default(FREE)
 
   accounts          Account[]
   sessions          Session[]

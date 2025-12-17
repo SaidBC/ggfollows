@@ -9,9 +9,12 @@ import {
 import { Button } from "@/components/ui/button";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { PlanType } from "@prisma/client";
 
 interface PricingCardProps {
-  tier: "Free" | "Premiem" | "Pro";
+  currentPlan: PlanType | null;
+  tier: PlanType;
   price: string;
   features: string[];
   description: string;
@@ -19,6 +22,7 @@ interface PricingCardProps {
 }
 
 export default function PricingCard({
+  currentPlan,
   features,
   price,
   description,
@@ -30,17 +34,19 @@ export default function PricingCard({
   return (
     <Card
       {...props}
-      className={cn(className, tier === "Premiem" && "xl:relative xl:-top-4")}
+      className={cn(className, tier === "PREMIUM" && "xl:relative xl:-top-4")}
     >
       <CardHeader className="gap-4">
         <CardTitle>
-          {tier === "Premiem" ? (
+          {tier === "PREMIUM" ? (
             <div className="flex justify-between">
-              <span className="gradient-text">{tier}</span>
-              <span className="gradient-text">Recomanded</span>
+              <span className="gradient-text">
+                {tier.charAt(0) + tier.slice(1).toLowerCase()}
+              </span>
+              <span className="gradient-text text-secondary">Recommanded</span>
             </div>
           ) : (
-            tier
+            tier.charAt(0) + tier.slice(1).toLowerCase()
           )}
         </CardTitle>
         <CardDescription className="flex justify-between items-center">
@@ -83,9 +89,35 @@ export default function PricingCard({
             );
           })}
         </div>
-        <Button className="w-full mt-auto" variant="secondary">
-          Get Started
-        </Button>
+        {currentPlan === null && (
+          <Button className="w-full mt-auto" variant="secondary" asChild>
+            <Link href="/auth/signup">Get Started</Link>
+          </Button>
+        )}
+        {currentPlan !== null && currentPlan !== tier && (
+          <div className="flex gap-2 items-center">
+            <Button className="grow" variant="secondary">
+              <div className="flex items-center gap-0.5">
+                <span className="">$</span>
+                <span className="text-2xl font-caveat-brush">{price}</span>
+              </div>
+            </Button>
+            <div className=" font-kablammo text-xl text-secondary">OR</div>
+            <Button className="grow" variant="secondary">
+              <div className="flex items-center gap-1">
+                <PointsIcon height={12} width={12} />
+                <span className="text-2xl font-caveat-brush">
+                  {Number(price) * 200}
+                </span>
+              </div>
+            </Button>
+          </div>
+        )}
+        {currentPlan === tier && (
+          <Button className="w-full mt-auto" variant="secondary">
+            Current Plan
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
