@@ -11,6 +11,8 @@ import PointsIcon from "@/components/vectors/PointIcon";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PlanType } from "@prisma/client";
+import PayWithMoneyButton from "./PayWithMoneyButton";
+import PayWithCoinsButton from "./PayWithCoinsButton";
 
 interface PricingCardProps {
   currentPlan: PlanType | null;
@@ -96,21 +98,9 @@ export default function PricingCard({
         )}
         {currentPlan !== null && currentPlan !== tier && (
           <div className="flex gap-2 items-center">
-            <Button className="grow" variant="secondary">
-              <div className="flex items-center gap-0.5">
-                <span className="">$</span>
-                <span className="text-2xl font-caveat-brush">{price}</span>
-              </div>
-            </Button>
+            <PayWithMoneyButton price={price} />
             <div className=" font-kablammo text-xl text-secondary">OR</div>
-            <Button className="grow" variant="secondary">
-              <div className="flex items-center gap-1">
-                <PointsIcon height={12} width={12} />
-                <span className="text-2xl font-caveat-brush">
-                  {Number(price) * 200}
-                </span>
-              </div>
-            </Button>
+            <PayWithCoinsButton plan={tier} price={price} />
           </div>
         )}
         {currentPlan === tier && (

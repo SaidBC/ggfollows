@@ -102,3 +102,7 @@ export type CheckTaskResponse =
   | FieldsErrorResponse;
 
 export type DeleteTaskResponse = ResponseSuccess<Task> | FieldsErrorResponse;
+
+export type UpgradePlanResponse =
+  | ResponseSuccess<PointTransaction>
+  | FieldsErrorResponse;
