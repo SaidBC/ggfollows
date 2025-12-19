@@ -1,4 +1,6 @@
+import checkPlanExpiry from "@/lib/checkPlanExpiry";
 import prisma from "@/lib/prisma";
+import siteConfig from "@/lib/siteConfig";
 import fieldErrorResponse from "@/utils/fieldErrorResponse";
 import isAuthenticated from "@/utils/isAuthenticated";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,6 +22,9 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) return fieldErrorResponse("root", "User not found", 404);
+    const isExpired = await checkPlanExpiry(user);
+    const dailyReward =
+      siteConfig.plans[isExpired ? "FREE" : user.plan].dailyReward;
 
     const lastClaim = user.lastDailyRewardDate
       ? new Date(user.lastDailyRewardDate)
@@ -36,6 +41,7 @@ export async function GET(req: NextRequest) {
       data: {
         claimed: Boolean(isClaimedToday),
         streak: user.currentStreak,
+        reward: dailyReward,
       },
     });
   } catch {

@@ -57,6 +57,7 @@ export type GetDailyRewardStatusResponse =
   | ResponseSuccess<{
       claimed: boolean;
       streak: number;
+      reward: number;
     }>
   | FieldsErrorResponse;
 

@@ -1,6 +1,5 @@
 "use client";
 
-import ErrorText from "@/components/ErrorText";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,29 +14,22 @@ import { Spinner } from "@/components/ui/spinner";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useClaimDailyReward } from "@/hooks/useClaimDailyReward";
 import { useDailyReward } from "@/hooks/useDailyRewardStatus";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function DailyRewardCard() {
   const { data, error } = useDailyReward();
-  const {
-    mutate,
-    isPending,
-    isSuccess,
-    error: claimError,
-  } = useClaimDailyReward();
+  const { mutate, isPending } = useClaimDailyReward();
 
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("You successfully claimed 20 points!");
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (claimError) {
-      toast.error(claimError.message);
-    }
-  }, [claimError]);
+  const handleSubmit = function () {
+    mutate(undefined, {
+      onSuccess: (data) => {
+        toast.success(data.message);
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
+  };
 
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
@@ -49,11 +41,11 @@ export default function DailyRewardCard() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <PointsIcon width={42} height={42} />
-              <span>+20</span>
+              <span>+{data.data.reward}</span>
             </div>
 
             <Button
-              onClick={() => mutate()}
+              onClick={handleSubmit}
               disabled={data.data.claimed || isPending}
               variant={"secondary"}
             >

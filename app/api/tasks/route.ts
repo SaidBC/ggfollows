@@ -1,3 +1,4 @@
+import checkPlanExpiry from "@/lib/checkPlanExpiry";
 import { spendPoints } from "@/lib/points";
 import prisma from "@/lib/prisma";
 import createTaskSchema from "@/lib/schemas/createTaskSchema";
@@ -17,10 +18,12 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: auth.data.id },
       select: {
+        id: true,
         plan: true,
         points: true,
         dailyTasksCreatedCount: true,
         lastTaskCreatedAt: true,
+        currentPeriodEnd: true,
         _count: {
           select: {
             createdTasks: true,
@@ -39,18 +42,22 @@ export async function POST(req: NextRequest) {
 
     if (total > user.points)
       return fieldErrorResponse("root", "You don't have enough points", 400);
+
+    const isExpired = await checkPlanExpiry(user);
     const now = new Date();
     const isNewDay =
       !user.lastTaskCreatedAt ||
       user.lastTaskCreatedAt.toDateString() !== now.toDateString();
 
     const isActiveLimitReached =
-      user._count.createdTasks >= siteConfig.TASK_ACTIVE_LIMITS[user.plan];
+      user._count.createdTasks >=
+      siteConfig.TASK_ACTIVE_LIMITS[isExpired ? "FREE" : user.plan];
 
     const limitCount = isNewDay ? 0 : user.dailyTasksCreatedCount;
 
     const isDailyLimitReached =
-      limitCount >= siteConfig.TASK_DAILY_LIMITS[user.plan];
+      limitCount >=
+      siteConfig.TASK_DAILY_LIMITS[isExpired ? "FREE" : user.plan];
 
     if (isActiveLimitReached) {
       return fieldErrorResponse(

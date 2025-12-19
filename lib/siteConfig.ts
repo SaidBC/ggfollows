@@ -144,6 +144,7 @@ const siteConfig = {
     FREE: {
       name: "FREE" as const,
       description: "Start earning points and growing with daily rewards.",
+      dailyReward: 20,
       price: "0",
       features: [
         "Up to 10 active tasks",
@@ -157,6 +158,7 @@ const siteConfig = {
     PREMIUM: {
       name: "PREMIUM" as const,
       description: "More tasks, more visibility, faster growth.",
+      dailyReward: 50,
       price: "5",
       features: [
         "Up to 50 active tasks",
@@ -172,6 +174,7 @@ const siteConfig = {
     PRO: {
       name: "PRO" as const,
       description: "Unlimited power for serious creators.",
+      dailyReward: 70,
       price: "10",
       features: [
         "Unlimited active tasks",

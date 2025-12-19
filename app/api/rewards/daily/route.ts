@@ -4,8 +4,9 @@ import isAuthenticated from "@/utils/isAuthenticated";
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import fieldErrorResponse from "@/utils/fieldErrorResponse";
+import checkPlanExpiry from "@/lib/checkPlanExpiry";
+import siteConfig from "@/lib/siteConfig";
 
-const DAILY_BONUS = 20;
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
@@ -45,10 +46,13 @@ export async function POST(req: NextRequest) {
         400
       );
     }
+    const isExpired = await checkPlanExpiry(user);
+    const dailyReward =
+      siteConfig.plans[isExpired ? "FREE" : user.plan].dailyReward;
 
     const { balance, transaction } = await earnPoints(
       userId,
-      DAILY_BONUS,
+      dailyReward,
       TransactionSource.DAILY_REWARD
     );
     await prisma.user.update({
@@ -64,7 +68,7 @@ export async function POST(req: NextRequest) {
     return Response.json({
       success: true,
       data: {
-        message: `You have claimed ${DAILY_BONUS} points today!`,
+        message: `You have claimed ${dailyReward} points today!`,
         balance,
       },
     });
