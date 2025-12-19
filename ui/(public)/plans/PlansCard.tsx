@@ -20,7 +20,7 @@ interface PricingCardProps {
   price: string;
   features: string[];
   description: string;
-  period?: "mounth" | "year";
+  period?: "month" | "year";
 }
 
 export default function PricingCard({
@@ -29,7 +29,7 @@ export default function PricingCard({
   price,
   description,
   tier,
-  period = "mounth",
+  period = "month",
   className,
   ...props
 }: PricingCardProps & React.ComponentProps<"div">) {
@@ -100,7 +100,7 @@ export default function PricingCard({
           <div className="flex gap-2 items-center">
             <PayWithMoneyButton price={price} />
             <div className=" font-kablammo text-xl text-secondary">OR</div>
-            <PayWithCoinsButton plan={tier} price={price} />
+            <PayWithCoinsButton period={period} plan={tier} price={price} />
           </div>
         )}
         {currentPlan === tier && (

@@ -118,7 +118,9 @@ model User {
   emailVerified DateTime?
   image         String?
   bio           String?   @db.Text
-  plan          PlanType  @default(FREE)
+
+  plan             PlanType  @default(FREE)
+  currentPeriodEnd DateTime?
 
   accounts          Account[]
   sessions          Session[]

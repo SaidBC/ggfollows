@@ -1,4 +1,5 @@
 import {
+  PlanType,
   PointTransaction,
   Prisma,
   RewardCampaign,
@@ -104,5 +105,8 @@ export type CheckTaskResponse =
 export type DeleteTaskResponse = ResponseSuccess<Task> | FieldsErrorResponse;
 
 export type UpgradePlanResponse =
-  | ResponseSuccess<PointTransaction>
+  | ResponseSuccess<{
+      plan: PlanType;
+      expiry: Date | null;
+    }>
   | FieldsErrorResponse;

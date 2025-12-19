@@ -63,7 +63,7 @@ export default async function PlansCards({
                     key === "premium" &&
                       "md:max-lg:col-start-1 md:max-lg:col-end-3  md:max-lg:row-start-1 md:max-lg:justify-self-center"
                   )}
-                  period="mounth"
+                  period="month"
                   features={plan.features}
                   tier={plan.name}
                   price={plan.price}

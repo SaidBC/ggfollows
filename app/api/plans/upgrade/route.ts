@@ -10,61 +10,75 @@ export async function POST(req: NextRequest) {
     const auth = await isAuthenticated(req);
     if (!auth.isSuccess) return auth.response;
 
-    const authUser = auth.data;
-    const userId = authUser.id;
-
+    const userId = auth.data.id;
     const { searchParams } = req.nextUrl;
-    const plan = searchParams.get("plan");
 
-    if (!(plan === "PREMIUM" || plan === "PRO"))
-      return fieldErrorResponse("root", "Invalid plan param value", 404);
+    // 1. Fix: Correct param key for period
+    const plan = searchParams.get("plan") as "PREMIUM" | "PRO";
+    const period = searchParams.get("period") as "month" | "year";
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    // 2. Validation
+    if (!["PREMIUM", "PRO"].includes(plan))
+      return fieldErrorResponse("root", "Invalid plan", 400);
 
-    if (!user) return fieldErrorResponse("root", "User not found", 404);
-    if (user.plan === plan)
-      return fieldErrorResponse(
-        "root",
-        "User already upgraded to this plan",
-        404
+    if (!["month", "year"].includes(period))
+      return fieldErrorResponse("root", "Invalid period", 400);
+
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user) throw new Error("USER_NOT_FOUND");
+
+      if (user.plan === plan) throw new Error("ALREADY_ON_PLAN");
+      if (user.plan === "PRO" && plan === "PREMIUM")
+        throw new Error("CANNOT_DOWNGRADE");
+
+      const planPointsPrice =
+        Number(siteConfig.plans[plan].price) *
+        (period === "month" ? 1 : 10) *
+        siteConfig.POINTS_RATE;
+
+      if (user.points < planPointsPrice) throw new Error("INSUFFICIENT_POINTS");
+
+      const expiryDate = new Date();
+      expiryDate.setDate(
+        expiryDate.getDate() + (period === "month" ? 30 : 365)
       );
-    if (user.plan === "PRO" && plan === "PREMIUM")
-      return fieldErrorResponse(
-        "root",
-        "Cannot downgrade plan from PRO to PREMIUM",
-        404
-      );
-    const planPointsPrice =
-      Number(siteConfig.plans[plan].price) * siteConfig.POINTS_RATE;
 
-    if (planPointsPrice > user.points)
-      return fieldErrorResponse("root", "You don't have enough points", 400);
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: {
+          points: { decrement: planPointsPrice },
+          plan,
+          currentPeriodEnd: expiryDate,
+          pointTransactions: {
+            create: {
+              amount: planPointsPrice,
+              type: "SPEND",
+              source: "PURCHASE",
+            },
+          },
+        },
+        include: {
+          pointTransactions: { take: 1, orderBy: { createdAt: "desc" } },
+        },
+      });
 
-    const { transaction } = await spendPoints(
-      user.id,
-      planPointsPrice,
-      "PURCHASE"
-    );
-
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        plan,
-      },
+      return updatedUser;
     });
 
     return NextResponse.json({
       success: true,
-      data: transaction,
+      data: { plan: result.plan, expiry: result.currentPeriodEnd },
     });
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (error.message === "INSUFFICIENT_POINTS")
+      return fieldErrorResponse("root", "Insufficient points balance", 400);
+    if (error.message === "ALREADY_ON_PLAN")
+      return fieldErrorResponse("root", "You are already on this plan", 400);
+    if (error.message === "CANNOT_DOWNGRADE")
+      return fieldErrorResponse("root", "You are already on higher plan", 400);
+
+    console.error("Upgrade Error:", error);
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }
