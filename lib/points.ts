@@ -74,7 +74,7 @@ export async function spendPoints(
     const transaction = await tx.pointTransaction.create({
       data: {
         userId,
-        amount: -amount,
+        amount: amount,
         type: "SPEND",
         source,
       },

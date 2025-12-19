@@ -56,6 +56,10 @@ export default function TableSection() {
             transactions.transactions.map((transaction) => {
               const date = new Date(transaction.createdAt);
               const formatedDate = date.toUTCString();
+              const displayAmount =
+                transaction.type === "SPEND"
+                  ? `-${transaction.amount}`
+                  : `+${transaction.amount}`;
               return (
                 <TableRow key={transaction.id}>
                   <TableCell className="font-medium">
@@ -74,7 +78,7 @@ export default function TableSection() {
                   <TableCell className="font-bold">
                     <div className="flex items-center  justify-end gap-2">
                       <PointsIcon />
-                      <span>{transaction.amount}</span>
+                      <span>{displayAmount}</span>
                     </div>
                   </TableCell>
                 </TableRow>
