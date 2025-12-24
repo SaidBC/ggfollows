@@ -1,4 +1,5 @@
 import ComingSoonPage from "@/components/ComingSoonPage";
+import ServiceSwitcher from "@/ui/(public)/services/ServiceSwitcher";
 
 import { Metadata } from "next";
 
@@ -23,7 +24,15 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div>
-      <ComingSoonPage />
+      {/* <ComingSoonPage /> */}
+      <div className="min-h-[calc(100dvh-var(--header-height)-var(--footer-height)-1px)] flex justify-center py-4">
+        <div className="flex flex-col">
+          <h1 className="font-bold text-3xl my-2 text-neutral-300">
+            Services :
+          </h1>
+          <ServiceSwitcher />
+        </div>
+      </div>
     </div>
   );
 }
