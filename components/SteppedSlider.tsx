@@ -9,6 +9,7 @@ import {
 } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import React from "react";
+import formatNumber from "@/utils/formatNumber";
 
 type FormValues = {
   amount: number;
@@ -43,7 +44,6 @@ export default function SteppedSlider({
           return (
             <button
               type="button"
-              className=""
               onClick={() => field.onChange(step)}
               key={step}
             >
@@ -65,7 +65,7 @@ export default function SteppedSlider({
                       isActive && "font-bold text-secondary"
                     )}
                   >
-                    {step}
+                    {formatNumber(step)}
                   </span>
                 </div>
               </div>

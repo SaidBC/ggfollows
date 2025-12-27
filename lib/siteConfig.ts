@@ -9,6 +9,7 @@ import {
   IconClipboardPlus,
   IconCrown,
   IconDashboard,
+  IconReceipt,
 } from "@tabler/icons-react";
 
 const siteConfig = {
@@ -106,6 +107,11 @@ const siteConfig = {
       title: "Plans",
       icon: IconCrown,
       href: "/plans",
+    },
+    {
+      title: "Orders",
+      icon: IconReceipt,
+      href: "/orders",
     },
   ],
   platforms: {

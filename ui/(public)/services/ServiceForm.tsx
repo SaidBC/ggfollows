@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import serviceOrderSchema from "@/lib/schemas/serviceOrderSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +18,8 @@ import { IconHeart, IconUserPlus } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 
 const MIN = 0;
-const MAX = 1000;
-const STEP = 100;
+const MAX = 10000;
+const STEP = 1000;
 
 const steps = Array.from(
   { length: (MAX - MIN) / STEP + 1 },
@@ -36,7 +35,13 @@ export default function ServiceForm() {
     register,
     formState: { errors, isLoading },
     setError,
-  } = useForm({ resolver: zodResolver(serviceOrderSchema) });
+  } = useForm({
+    resolver: zodResolver(serviceOrderSchema),
+    defaultValues: {
+      type: "follow",
+      quantity: 500,
+    },
+  });
   const quantity = watch("quantity");
 
   return (
@@ -75,7 +80,7 @@ export default function ServiceForm() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>0</span>
-                  <span>1000</span>
+                  <span>10000</span>
                 </div>
                 <SteppedSlider
                   min={MIN}
