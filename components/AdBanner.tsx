@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Spinner } from "./ui/spinner";
 import { cn } from "@/lib/utils";
+import clientEnv from "@/utils/clientEnv";
 
 interface AdConfigs {
   apiKey: string;
@@ -21,6 +22,7 @@ export default function AdBanner({
   adConfigs,
   delay = 0,
 }: AdBannerProps) {
+  const isDev = clientEnv.NEXT_PUBLIC_NODE_ENV === "development";
   const containerClass =
     "relative bg-card border border-border rounded-lg shadow-sm overflow-hidden w-full h-full";
   const containerRef = useRef<HTMLDivElement>(null);
@@ -52,7 +54,7 @@ export default function AdBanner({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || isDev) return;
 
     setIsLoading(true);
     setIsLoaded(false);
@@ -161,7 +163,7 @@ export default function AdBanner({
   }, [offsetWidth, delay]);
   return (
     <div className={className}>
-      {isLoading && !isBlocked && (
+      {isLoading && !isBlocked && !isDev && (
         <div className={containerClass}>
           <div className="absolute inset-0 flex gap-2 items-center justify-center text-xs text-muted-foreground">
             <Spinner className="size-6" />
@@ -169,13 +171,23 @@ export default function AdBanner({
           </div>
         </div>
       )}
-      {isBlocked && (
+      {isBlocked && !isDev && (
         <div className={containerClass}>
           <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-sm text-muted-foreground bg-card">
             <p className="font-medium">Ad blocked 🙁</p>
             <p className="text-xs opacity-70 mt-1">
               Please consider disabling your ad blocker — it helps support
               GGfollows and keeps the platform free ❤️
+            </p>
+          </div>
+        </div>
+      )}
+      {isDev && (
+        <div className={containerClass}>
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-sm text-muted-foreground bg-card">
+            <p className="font-medium">Ad blocked 🙁</p>
+            <p className="text-xs opacity-70 mt-1">
+              You are in developement mode
             </p>
           </div>
         </div>
