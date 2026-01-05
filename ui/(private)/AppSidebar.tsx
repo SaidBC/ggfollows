@@ -20,7 +20,7 @@ import { useUser } from "@/hooks/useUser";
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const privateSidebarNavLinks = siteConfig.privateSidebarNavLinks;
+  const { privateSidebarNavLinks, adminSidebarNavLinks } = siteConfig;
   const { data, isLoading, error } = useUser();
 
   if (error) return <p>Error loading user</p>;
@@ -46,7 +46,13 @@ export default function AppSidebar({
         <Separator />
       </SidebarHeader>
       <SidebarContent className="px-2">
-        <SidebarNavLinks items={privateSidebarNavLinks} />
+        <SidebarNavLinks
+          items={
+            user?.role !== "ADMIN"
+              ? privateSidebarNavLinks
+              : adminSidebarNavLinks
+          }
+        />
       </SidebarContent>
       <SidebarFooter>
         <div>

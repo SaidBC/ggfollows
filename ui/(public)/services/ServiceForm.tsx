@@ -1,5 +1,6 @@
 "use client";
 import ErrorText from "@/components/ErrorText";
+import PaymentDialog from "@/components/PaymentDialog";
 import SteppedSlider from "@/components/SteppedSlider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +13,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { useCreateOrder } from "@/hooks/useCreateOrder";
 import serviceOrderSchema from "@/lib/schemas/serviceOrderSchema";
+import { CreateOrderResponse, CreateOrderSuccessResponseData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconHeart, IconUserPlus } from "@tabler/icons-react";
+import { TaskPlatform } from "@prisma/client";
+import { IconBolt } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
 const MIN = 0;
 const MAX = 10000;
@@ -26,7 +33,23 @@ const steps = Array.from(
   (_, i) => MIN + i * STEP
 );
 
-export default function ServiceForm() {
+interface ServiceFormProps {
+  services: {
+    code: string;
+    name: string;
+    platform: TaskPlatform;
+    pricePerUnit: number;
+    minQuantity: number;
+    maxQuantity: number;
+  }[];
+}
+
+export default function ServiceForm({ services }: ServiceFormProps) {
+  const [open, setOpen] = useState(false);
+  const [responseData, setResponseData] =
+    useState<CreateOrderSuccessResponseData | null>(null);
+  const { mutate } = useCreateOrder();
+
   const {
     watch,
     reset,
@@ -38,34 +61,76 @@ export default function ServiceForm() {
   } = useForm({
     resolver: zodResolver(serviceOrderSchema),
     defaultValues: {
-      type: "follow",
-      quantity: 500,
+      code: services[0].code,
+      quantity: 1000,
     },
   });
+  const code = watch("code");
   const quantity = watch("quantity");
 
+  const selectedService = services.find((service) => service.code === code)!;
+  const onSubmit = async function (data: z.output<typeof serviceOrderSchema>) {
+    try {
+      mutate(data, {
+        onError: (data) => {
+          setError("root", { message: data.message });
+        },
+        onSuccess: (data) => {
+          if (!data.success) {
+            const fields = ["quantity", "code", "link", "root"] as const;
+            for (const field of fields) {
+              if (field in data.errors) {
+                setError(field, {
+                  message: data.errors[field]!.message,
+                });
+              }
+            }
+            return;
+          }
+          setResponseData(data.data);
+          setOpen(true);
+          reset();
+        },
+      });
+    } catch (error) {
+      setError("root", {
+        message: "An error occurred during creating. Please try again.",
+      });
+    }
+  };
+
+  useEffect(() => {
+    console.log(errors);
+    if (errors.root) {
+      console.log("Toasted");
+      toast.error(errors.root.message || "An expected error occured");
+    }
+  }, [errors.root]);
+
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
         <div className="grid gap-2">
           <Label htmlFor="platform">Service type</Label>
           <Controller
             control={control}
-            name="type"
+            name="code"
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="service type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem className="grid gap-2" value="follow">
-                    <IconUserPlus />
-                    <span>Follow</span>
-                  </SelectItem>
-                  <SelectItem className="grid gap-2" value="like">
-                    <IconHeart />
-                    <span>Post like</span>
-                  </SelectItem>
+                  {services.map((service) => (
+                    <SelectItem
+                      key={service.code}
+                      className="grid gap-2"
+                      value={service.code}
+                    >
+                      <IconBolt />
+                      <span>{service.name}</span>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -76,24 +141,33 @@ export default function ServiceForm() {
           <Controller
             control={control}
             name="quantity"
-            render={({ field }) => (
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>0</span>
-                  <span>10000</span>
+            render={({ field }) => {
+              const { minQuantity, maxQuantity } = selectedService;
+
+              const steps = Array.from(
+                { length: (maxQuantity - minQuantity) / STEP + 1 },
+                (_, i) => minQuantity + i * STEP
+              );
+
+              return (
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>{minQuantity}</span>
+                    <span>{maxQuantity}</span>
+                  </div>
+                  <SteppedSlider
+                    min={minQuantity}
+                    max={maxQuantity}
+                    step={STEP}
+                    value={[field.value ?? 0]}
+                    onValueChange={(value) => field.onChange(value[0])}
+                    onValueCommit={(value) => field.onChange(value[0])}
+                    field={field}
+                    steps={steps}
+                  />
                 </div>
-                <SteppedSlider
-                  min={MIN}
-                  max={MAX}
-                  step={STEP}
-                  value={[field.value ?? 0]}
-                  onValueChange={(value) => field.onChange(value[0])}
-                  onValueCommit={(value) => field.onChange(value[0])}
-                  field={field}
-                  steps={steps}
-                />
-              </div>
-            )}
+              );
+            }}
           />
         </div>
         <div className="grow grid gap-2">
@@ -107,8 +181,15 @@ export default function ServiceForm() {
           />
           {errors.link && <ErrorText message={"Invalid link"} />}
         </div>
+        <p className="text-xs text-muted-foreground">
+          Price per unit : {selectedService.pricePerUnit / 1000}$
+        </p>
         <Button variant={"secondary"} disabled={isLoading}>
-          {!isLoading && <div className="font-bold">Price 5$</div>}
+          {!isLoading && (
+            <div className="font-bold">
+              Price {(quantity * selectedService.pricePerUnit) / 1000}$
+            </div>
+          )}
           {isLoading && (
             <div className="flex items-center gap-4">
               <Spinner className="size-4" />
@@ -117,6 +198,14 @@ export default function ServiceForm() {
           )}
         </Button>
       </div>
+      <PaymentDialog
+        open={open}
+        onOpenChange={setOpen}
+        price_amount={
+          responseData ? responseData.order.totalPrice.toString() : null
+        }
+        address={responseData ? responseData.payment.cryptoAddress : null}
+      />
     </form>
   );
 }

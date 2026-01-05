@@ -7,6 +7,7 @@ const serverEnv = z.object({
   EMAIL_PASS: z.string(),
   NEXTAUTH_URL: z.url(),
   NEXTAUTH_SECRET: z.string(),
+  NOWPAYMENTS_API_KEY: z.string(),
 });
 
 export default serverEnv.parse({
@@ -16,4 +17,5 @@ export default serverEnv.parse({
   EMAIL_PASS: process.env.EMAIL_PASS,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+  NOWPAYMENTS_API_KEY: process.env.NOWPAYMENTS_API_KEY,
 });

@@ -2,7 +2,7 @@ import z from "zod";
 
 const serviceOrderSchema = z.object({
   quantity: z.number(),
-  type: z.enum(["follow", "like"]),
+  code: z.string(),
   link: z.url(),
 });
 

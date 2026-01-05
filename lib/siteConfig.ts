@@ -9,7 +9,9 @@ import {
   IconClipboardPlus,
   IconCrown,
   IconDashboard,
+  IconHistory,
   IconReceipt,
+  IconUsers,
 } from "@tabler/icons-react";
 
 const siteConfig = {
@@ -80,6 +82,34 @@ const siteConfig = {
       question: "How can I earn more points?",
       answer:
         "You can earn more points by following other users, completing daily missions, inviting friends, and staying active. Active members often receive loyalty rewards and surprise bonuses.",
+    },
+  ],
+  adminSidebarNavLinks: [
+    {
+      title: "Overview",
+      icon: IconDashboard,
+      href: "/admin/overview",
+    },
+    {
+      title: "Users",
+      icon: IconUsers,
+      href: "/admin/users",
+    },
+
+    {
+      title: "Tasks",
+      icon: IconChecklist,
+      href: "/admin/tasks",
+    },
+    {
+      title: "Orders",
+      icon: IconReceipt,
+      href: "/admin/orders",
+    },
+    {
+      title: "Transactions",
+      icon: IconHistory,
+      href: "/admin/transactions",
     },
   ],
   privateSidebarNavLinks: [
@@ -196,6 +226,40 @@ const siteConfig = {
     },
   },
   POINTS_RATE: 200,
+  SERVICES: [
+    {
+      code: "FB_FOLLOWERS_FACEBOOK",
+      name: "Facebook Followers (Basic)",
+      platform: "FACEBOOK" as const,
+      pricePerUnit: 10,
+      minQuantity: 1000,
+      maxQuantity: 10000,
+    },
+    {
+      code: "FB_POST_LIKE_BASIC",
+      name: "Facebook Post's Likes (Basic)",
+      platform: "FACEBOOK" as const,
+      pricePerUnit: 10,
+      minQuantity: 1000,
+      maxQuantity: 10000,
+    },
+    {
+      code: "IG_FOLLOWERS_BASIC",
+      name: "Instagram Followers (Basic)",
+      platform: "INSTAGRAM" as const,
+      pricePerUnit: 10,
+      minQuantity: 1000,
+      maxQuantity: 10000,
+    },
+    {
+      code: "YT_SUBS_BASIC",
+      name: "YouTube Subscribers",
+      platform: "YOUTUBE" as const,
+      pricePerUnit: 20,
+      minQuantity: 50,
+      maxQuantity: 5000,
+    },
+  ],
 };
 
 export default siteConfig;

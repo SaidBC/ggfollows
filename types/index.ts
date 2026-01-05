@@ -1,4 +1,5 @@
 import {
+  Order,
   PlanType,
   PointTransaction,
   Prisma,
@@ -111,3 +112,66 @@ export type UpgradePlanResponse =
       expiry: Date | null;
     }>
   | FieldsErrorResponse;
+
+export type PaymentResponse =
+  | ResponseSuccess<{
+      paymentId: string;
+      cryptoAddress: string;
+    }>
+  | FieldsErrorResponse;
+
+export interface CreateOrderSuccessResponseData {
+  order: Order;
+  payment: {
+    paymentId: string;
+    cryptoAddress: string;
+  };
+}
+
+export type CreateOrderResponse =
+  | ResponseSuccess<CreateOrderSuccessResponseData>
+  | FieldsErrorResponse;
+
+export interface NowPaymentsApiPaymentResponse {
+  payment_id: string; // 5745459419
+  payment_status:
+    | "waiting"
+    | "confirming"
+    | "confirmed"
+    | "sending"
+    | "finished"
+    | "failed"
+    | "expired";
+
+  pay_address: string; // crypto wallet address
+
+  price_amount: number; // fiat amount (USD/EUR)
+  price_currency: string; // "usd", "eur"
+
+  pay_amount: number; // crypto amount
+  pay_currency: string; // "btc", "usdttrc20", etc.
+
+  order_id: string;
+  order_description?: string;
+
+  ipn_callback_url?: string | null;
+
+  created_at: string; // ISO date
+  updated_at: string; // ISO date
+
+  purchase_id: number;
+
+  amount_received?: number | null;
+
+  payin_extra_id?: string | null;
+
+  smart_contract?: string | null;
+
+  network?: string | null; // "btc", "trx", "eth"
+  network_precision?: number | null; // decimals
+
+  time_limit?: number | null;
+  burning_percent?: number | null;
+
+  expiration_estimate_date?: string | null;
+}

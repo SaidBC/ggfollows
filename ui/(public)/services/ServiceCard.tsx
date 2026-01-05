@@ -9,6 +9,9 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ platform }: ServiceCardProps) {
   const PlatformIcon = siteConfig.platforms[platform].icon;
+  const services = siteConfig.SERVICES.filter(
+    (service) => service.platform === platform
+  );
   return (
     <Card className="animate-fade-up">
       <CardHeader>
@@ -20,7 +23,7 @@ export default function ServiceCard({ platform }: ServiceCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ServiceForm />
+        <ServiceForm services={services} />
       </CardContent>
     </Card>
   );

@@ -20,7 +20,7 @@ interface SteppedSliderProps {
   max: number;
   steps: number[];
   field: ControllerRenderProps<
-    { quantity: number; type: "follow" | "like"; link: string },
+    { quantity: number; code: string; link: string },
     "quantity"
   >;
 }

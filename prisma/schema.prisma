@@ -53,6 +53,30 @@ enum TaskCompletionStatus {
   REJECTED // Completion proof was invalid
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  REJECTED
+  CANCELED
+  PARTIAL
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  CRYPTO
+  ADMIN
+}
+
 enum VerificationCodeReasons {
   EMAIL_VERIFICATION
 }
@@ -133,11 +157,14 @@ model User {
   createdTasks    Task[] // Tasks created by this user
   taskCompletions TaskCompletion[] // Tasks completed by this user
 
+  orders Order[]
+
   dailyTasksCreatedCount Int       @default(0)
   lastTaskCreatedAt      DateTime?
 
   currentStreak       Int       @default(0)
   lastDailyRewardDate DateTime?
+  payments            Payment[]
 }
 
 // --- Points & Rewards ---
@@ -227,4 +254,70 @@ model TaskCompletion {
   createdAt DateTime @default(now())
 
   @@unique([userId, taskId, completionProof])
+}
+
+model Service {
+  id String @id @default(cuid())
+
+  code     String       @unique
+  name     String
+  platform TaskPlatform
+
+  pricePerUnit Int
+  minQuantity  Int
+  maxQuantity  Int
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  quantity Int
+  data     String?
+  link     String
+
+  totalPrice Int // snapshot price at time of order
+  status     OrderStatus @default(PENDING)
+
+  deliveredQuantity Int @default(0)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  paymentId String  @unique
+  payment   Payment @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  provider PaymentProvider
+  status   PaymentStatus   @default(PENDING)
+
+  amountFiat   Float? // USD / EUR (optional)
+  currencyFiat String? // USD, EUR
+
+  amountCrypto   Float?
+  currencyCrypto String?
+
+  order Order?
+
+  cryptoAddress String?
+  providerRef   String?
+
+  createdAt   DateTime  @default(now())
+  confirmedAt DateTime?
 }

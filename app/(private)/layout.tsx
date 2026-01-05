@@ -10,7 +10,7 @@ export default function Layout({
   return (
     <SidebarProvider>
       <AppSidebar collapsible="icon" variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="animate-fade-up">
         <Header />
         {children}
       </SidebarInset>
