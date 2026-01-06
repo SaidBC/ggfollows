@@ -201,10 +201,7 @@ export default function ServiceForm({ services }: ServiceFormProps) {
       <PaymentDialog
         open={open}
         onOpenChange={setOpen}
-        price_amount={
-          responseData ? responseData.order.totalPrice.toString() : null
-        }
-        address={responseData ? responseData.payment.cryptoAddress : null}
+        payment={responseData?.payment || null}
       />
     </form>
   );

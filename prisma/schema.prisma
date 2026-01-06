@@ -317,6 +317,12 @@ model Payment {
 
   cryptoAddress String?
   providerRef   String?
+  network       String?
+
+  expirationEstimateDate DateTime?
+  validUntil             DateTime?
+
+  txHash String? @unique
 
   createdAt   DateTime  @default(now())
   confirmedAt DateTime?

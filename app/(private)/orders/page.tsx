@@ -1,4 +1,4 @@
-import OrdersTable from "@/ui/(private)/orders/OrdersTable";
+import OrdersContainer from "@/ui/(private)/orders/OrdersContainer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function Page() {
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 lg:px-6 px-2">
           <h1 className="font-bold text-3xl my-2 text-neutral-300">Orders :</h1>
-          <OrdersTable />
+          <OrdersContainer />
         </div>
       </div>
     </div>

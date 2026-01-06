@@ -37,17 +37,18 @@ export default async function createNowPayment({
   );
 
   const nowPayment = response.data;
+  console.log("NowPayments response:", nowPayment);
 
-  await prisma.payment.update({
+  const updatedPayment = await prisma.payment.update({
     where: { id: payment.id },
     data: {
       providerRef: nowPayment.payment_id,
       cryptoAddress: nowPayment.pay_address,
+      expirationEstimateDate: nowPayment.expiration_estimate_date,
+      validUntil: nowPayment.expiration_estimate_date,
+      network: nowPayment.network,
     },
   });
 
-  return {
-    paymentId: payment.id,
-    cryptoAddress: nowPayment.pay_address,
-  };
+  return updatedPayment;
 }

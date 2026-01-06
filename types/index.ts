@@ -1,9 +1,11 @@
 import {
   Order,
+  Payment,
   PlanType,
   PointTransaction,
   Prisma,
   RewardCampaign,
+  Service,
   Task,
   TaskCompletion,
   User,
@@ -70,6 +72,13 @@ export type GetTransactionsResponse =
   | ResponseSuccess<{ transactions: PointTransaction[]; total: number }>
   | FieldsErrorResponse;
 
+export type GetOrdersResponse =
+  | ResponseSuccess<{
+      orders: (Order & { service: Service } & { payment: Payment })[];
+      total: number;
+    }>
+  | FieldsErrorResponse;
+
 export type TasksWithCompletions = (Task & {
   creator: {
     username: string;
@@ -122,10 +131,7 @@ export type PaymentResponse =
 
 export interface CreateOrderSuccessResponseData {
   order: Order;
-  payment: {
-    paymentId: string;
-    cryptoAddress: string;
-  };
+  payment: Payment;
 }
 
 export type CreateOrderResponse =
