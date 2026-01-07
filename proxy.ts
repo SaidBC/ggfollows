@@ -6,6 +6,7 @@ import serverEnv from "@/utils/serverEnv";
 const ONBOARDING_ROUTE = "/onboarding";
 const DASHBOARD_ROUTE = "/dashboard";
 const AUTH_ROUTES = ["/auth/login", "/auth/signup"];
+const ADMIN_ROUTES = ["/admin/users", "/admin/orders", "/admin/overview"];
 const PRIVATE_ROUTES = [
   DASHBOARD_ROUTE,
   "/tasks",
@@ -67,6 +68,17 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // --- 3. ADMIN ROUTES: Protect Admin Routes ---
+  // If accessing an admin route and the user is not an admin, redirect to dashboard.
+  if (
+    ADMIN_ROUTES.some((route) => path.startsWith(route)) &&
+    token?.role !== "ADMIN"
+  ) {
+    const url = req.nextUrl.clone();
+    url.pathname = DASHBOARD_ROUTE;
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 
@@ -79,5 +91,6 @@ export const config = {
     "/onboarding",
     "/auth/login",
     "/auth/signup",
+    "/admin/:path*",
   ],
 };

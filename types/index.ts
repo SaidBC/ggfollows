@@ -43,6 +43,9 @@ export type VerifyEmailCodeResponse =
   | FieldsErrorResponse;
 
 export type GetUserMeResponse = ResponseSuccess<User> | FieldsErrorResponse;
+export type GetUsersResponse =
+  | ResponseSuccess<{ users: User[]; total: number }>
+  | FieldsErrorResponse;
 export type GetPointsBalanceResponse =
   | ResponseSuccess<{
       points: boolean;
@@ -136,6 +139,13 @@ export interface CreateOrderSuccessResponseData {
 
 export type CreateOrderResponse =
   | ResponseSuccess<CreateOrderSuccessResponseData>
+  | FieldsErrorResponse;
+
+export type AdminPointsAdjustResponse =
+  | ResponseSuccess<{
+      transaction: PointTransaction;
+      balance: number;
+    }>
   | FieldsErrorResponse;
 
 export interface NowPaymentsApiPaymentResponse {
