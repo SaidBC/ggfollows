@@ -41,7 +41,7 @@ export default function SettingRow({
         onSuccess: async (res) => {
           if (res.success) {
             setEditing(false);
-            await update(res.data);
+            await update({ user: res.data });
             return toast.success(`${label} updated successfully!`);
           } else {
             toast.error(

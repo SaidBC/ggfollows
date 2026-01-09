@@ -21,7 +21,7 @@ export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isAuthenticated = !!token;
   const isProfileComplete = isAuthenticated && !!token?.username;
-
+  console.log(token);
   // --- 1. UNAUTHENTICATED USERS: Protect Private Routes ---
   // If accessing a private route and NO token exists, redirect to login.
   if (
