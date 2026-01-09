@@ -191,3 +191,7 @@ export interface NowPaymentsApiPaymentResponse {
 
   expiration_estimate_date?: string | null;
 }
+
+export type GetServicesResponse =
+  | ResponseSuccess<Service[]>
+  | FieldsErrorResponse;

@@ -256,8 +256,8 @@ const siteConfig = {
       name: "YouTube Subscribers",
       platform: "YOUTUBE" as const,
       pricePerUnit: 20,
-      minQuantity: 50,
-      maxQuantity: 5000,
+      minQuantity: 1000,
+      maxQuantity: 10000,
     },
   ],
 };

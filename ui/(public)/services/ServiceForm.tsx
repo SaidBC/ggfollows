@@ -100,9 +100,7 @@ export default function ServiceForm({ services }: ServiceFormProps) {
   };
 
   useEffect(() => {
-    console.log(errors);
     if (errors.root) {
-      console.log("Toasted");
       toast.error(errors.root.message || "An expected error occured");
     }
   }, [errors.root]);
