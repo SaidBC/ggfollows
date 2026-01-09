@@ -55,6 +55,12 @@ export default function OrdersContainer() {
             />
           ))}
       </div>
+      {isLoading ||
+        (status === "loading" && (
+          <div className="w-full py-8">
+            <Spinner className="size-16 text-secondary mx-auto" />
+          </div>
+        ))}
       <MainPagination page={page} lastPage={lastPage} />
       {orders && orders.total === 0 && (
         <div>
@@ -65,12 +71,6 @@ export default function OrdersContainer() {
           />
         </div>
       )}
-      {isLoading ||
-        (status === "loading" && (
-          <div className="w-full py-8">
-            <Spinner className="size-16 text-secondary mx-auto" />
-          </div>
-        ))}
       <PaymentDialog open={open} onOpenChange={setOpen} payment={paymentData} />
     </div>
   );

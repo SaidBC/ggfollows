@@ -73,8 +73,8 @@ export default function ActiveOrderCard({
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <div className="flex justify-between items-center">
+      <CardFooter className="flex flex-col gap-2 ">
+        <div className="flex justify-between items-center w-full">
           <span className="text-muted-foreground text-xs">
             id: {id.length > 16 ? id.slice(0, 16) + "..." : id}
           </span>
@@ -87,7 +87,9 @@ export default function ActiveOrderCard({
             Payment Details
           </Button>
         </div>
-        <Button variant="secondary">Update</Button>
+        <Button className="w-full" variant="secondary">
+          Update
+        </Button>
       </CardFooter>
     </Card>
   );

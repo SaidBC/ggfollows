@@ -20,9 +20,9 @@ export default function ActiveOrdersContainer() {
   const { data, isLoading, error } = useGetOrders({
     page,
   });
-  if (error) return <p>Error loading active orders orders</p>;
+  if (error) return <p>Error loading orders</p>;
   if (!isLoading && (!data || !data.success))
-    return <p>Error loading active orders</p>;
+    return <p>Error loading orders</p>;
   const orders = data ? (data.success ? data.data : null) : null;
   const lastPage = Math.ceil((orders?.total || 0) / siteConfig.DEFAULT_LIMIT);
   const onOpenPaymentDetails = (data: Payment) => {
@@ -31,7 +31,6 @@ export default function ActiveOrdersContainer() {
       setOpen(true);
     };
   };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 @xl/main:grid-cols-2 @3xl/main:grid-cols-3">
@@ -52,6 +51,12 @@ export default function ActiveOrdersContainer() {
             />
           ))}
       </div>
+      {isLoading && (
+        <div className="w-full py-8">
+          <Spinner className="size-16 text-secondary mx-auto" />
+        </div>
+      )}
+      <PaymentDialog open={open} onOpenChange={setOpen} payment={paymentData} />
       <MainPagination page={page} lastPage={lastPage} />
       {orders && orders.total === 0 && (
         <div>
@@ -62,13 +67,6 @@ export default function ActiveOrdersContainer() {
           />
         </div>
       )}
-      {isLoading ||
-        (status === "loading" && (
-          <div className="w-full py-8">
-            <Spinner className="size-16 text-secondary mx-auto" />
-          </div>
-        ))}
-      <PaymentDialog open={open} onOpenChange={setOpen} payment={paymentData} />
     </div>
   );
 }

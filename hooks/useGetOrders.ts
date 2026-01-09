@@ -14,14 +14,19 @@ export function useGetOrders({
   const queries = `${userIdQuery}&${pageQuery}`;
 
   const url = `/orders?${queries}`;
+  console.log("Fetching orders with URL:", url);
 
   return useQuery({
     queryKey: ["orders", userId, page],
     queryFn: async () => {
-      const data = await apiTanstack<GetOrdersResponse>(url);
-      return data;
+      try {
+        const data = await apiTanstack<GetOrdersResponse>(url);
+        console.log(data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
     },
-    enabled: Boolean(userId),
     staleTime: 1000 * 30,
     refetchOnWindowFocus: false,
   });
