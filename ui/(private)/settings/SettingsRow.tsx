@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ErrorText from "@/components/ErrorText";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface Props {
   label: string;
@@ -21,6 +22,7 @@ export default function SettingRow({
   type = "text",
   ...props
 }: Props & React.ComponentProps<"input">) {
+  const { update } = useSession();
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value || "");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,9 +38,10 @@ export default function SettingRow({
     mutate(
       { [field]: inputValue },
       {
-        onSuccess: (res) => {
+        onSuccess: async (res) => {
           if (res.success) {
             setEditing(false);
+            await update(res.data);
             return toast.success(`${label} updated successfully!`);
           } else {
             toast.error(
