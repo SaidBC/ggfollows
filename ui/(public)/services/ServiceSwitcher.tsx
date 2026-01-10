@@ -14,6 +14,10 @@ export default function ServiceSwitcher() {
   if (!data || !data.success || error)
     return <p>An Error occures durring fetching</p>;
   const services = data.data;
+  const uniqueByPlatform = Array.from(
+    new Map(services.map((service) => [service.platform, service])).values()
+  );
+
   const unavailableServices = SERVICES.filter(
     (service) => !services.find((s) => s.platform === service)
   );
@@ -28,7 +32,7 @@ export default function ServiceSwitcher() {
           <TabsTrigger value="X">X (twitter)</TabsTrigger>
           <TabsTrigger value="TIKTOK">Tiktok</TabsTrigger>
         </TabsList>
-        {services.map((service) => (
+        {uniqueByPlatform.map((service) => (
           <TabsContent key={service.id} value={service.platform}>
             <ServiceCard platform={service.platform} />
           </TabsContent>
