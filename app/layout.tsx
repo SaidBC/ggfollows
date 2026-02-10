@@ -55,6 +55,7 @@ export const metadata: Metadata = {
   publisher: "GGfollows",
   other: {
     "application-name": "GGfollows",
+    monetag: "7999807836eec752081414780b752f5e",
   },
 };
 
