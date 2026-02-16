@@ -1,6 +1,4 @@
-import ComingSoonPage from "@/components/ComingSoonPage";
 import ServiceSwitcher from "@/ui/(public)/services/ServiceSwitcher";
-
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,15 +21,24 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div>
-      {/* <ComingSoonPage /> */}
-      <div className="min-h-[calc(100dvh-var(--header-height)-var(--footer-height)-1px)] flex justify-center py-4">
-        <div className="flex flex-col">
-          <h1 className="font-bold text-3xl my-2 text-neutral-300">
-            Services :
+    <div className="container mx-auto px-4 py-28 md:py-24">
+      <div className="flex flex-col gap-8 max-w-3xl mx-auto">
+        {/* Page header */}
+        <div className="flex flex-col gap-3">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/15 border border-secondary/30 text-sm text-secondary font-medium w-fit">
+            Marketplace
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            Browse Services
           </h1>
-          <ServiceSwitcher />
+          <p className="text-muted-foreground max-w-lg text-base leading-relaxed">
+            Choose a platform and order followers, likes, or subscribers to grow
+            your social media presence.
+          </p>
         </div>
+
+        {/* Service switcher */}
+        <ServiceSwitcher />
       </div>
     </div>
   );

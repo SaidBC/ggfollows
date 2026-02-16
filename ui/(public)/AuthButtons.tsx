@@ -1,30 +1,29 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { IconArrowRight } from "@tabler/icons-react";
 
 export default function AuthButtons() {
   return (
-    <ul className="flex gap-2">
-      <li>
-        <Button
-          className={`font-bold font-kablammo`}
-          variant={"secondary"}
-          asChild
-        >
-          <Link href="/auth/login">Sign In</Link>
-        </Button>
-      </li>
-      <li>
-        <span className="text-sm">or</span>
-      </li>
-      <li>
-        <Button
-          className={`font-bold font-kablammo`}
-          variant={"secondary"}
-          asChild
-        >
-          <Link href="/auth/signup">Create Account</Link>
-        </Button>
-      </li>
-    </ul>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        asChild
+        className="rounded-xl text-sm font-medium"
+      >
+        <Link href="/auth/login">Sign In</Link>
+      </Button>
+      <Button
+        variant="secondary"
+        size="sm"
+        asChild
+        className="rounded-xl text-sm font-medium"
+      >
+        <Link href="/auth/signup">
+          Get Started
+          <IconArrowRight size={14} />
+        </Link>
+      </Button>
+    </div>
   );
 }

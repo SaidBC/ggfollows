@@ -18,7 +18,7 @@ import serviceOrderSchema from "@/lib/schemas/serviceOrderSchema";
 import { CreateOrderResponse, CreateOrderSuccessResponseData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TaskPlatform } from "@prisma/client";
-import { IconBolt } from "@tabler/icons-react";
+import { IconBolt, IconShoppingCart, IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -27,11 +27,6 @@ import z from "zod";
 const MIN = 0;
 const MAX = 10000;
 const STEP = 1000;
-
-const steps = Array.from(
-  { length: (MAX - MIN) / STEP + 1 },
-  (_, i) => MIN + i * STEP
-);
 
 interface ServiceFormProps {
   services: {
@@ -69,6 +64,8 @@ export default function ServiceForm({ services }: ServiceFormProps) {
   const quantity = watch("quantity");
 
   const selectedService = services.find((service) => service.code === code)!;
+  const totalPrice = (quantity * selectedService.pricePerUnit) / 1000;
+
   const onSubmit = async function (data: z.output<typeof serviceOrderSchema>) {
     try {
       mutate(data, {
@@ -107,25 +104,31 @@ export default function ServiceForm({ services }: ServiceFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
+        {/* Service type */}
         <div className="grid gap-2">
-          <Label htmlFor="platform">Service type</Label>
+          <Label
+            htmlFor="platform"
+            className="text-sm font-medium text-foreground"
+          >
+            Service Type
+          </Label>
           <Controller
             control={control}
             name="code"
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="service type" />
+                <SelectTrigger className="w-full rounded-xl h-11 bg-muted/30 border-border/50">
+                  <SelectValue placeholder="Select a service" />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map((service) => (
                     <SelectItem
                       key={service.code}
-                      className="grid gap-2"
+                      className="gap-2"
                       value={service.code}
                     >
-                      <IconBolt />
+                      <IconBolt size={14} />
                       <span>{service.name}</span>
                     </SelectItem>
                   ))}
@@ -134,8 +137,15 @@ export default function ServiceForm({ services }: ServiceFormProps) {
             )}
           />
         </div>
+
+        {/* Quantity slider */}
         <div className="grid gap-2">
-          <Label htmlFor="serviceQuantity">Service quantity</Label>
+          <Label
+            htmlFor="serviceQuantity"
+            className="text-sm font-medium text-foreground"
+          >
+            Quantity
+          </Label>
           <Controller
             control={control}
             name="quantity"
@@ -149,9 +159,12 @@ export default function ServiceForm({ services }: ServiceFormProps) {
 
               return (
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>{minQuantity}</span>
-                    <span>{maxQuantity}</span>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{minQuantity.toLocaleString()}</span>
+                    <span className="text-secondary font-semibold text-sm">
+                      {(field.value ?? 0).toLocaleString()}
+                    </span>
+                    <span>{maxQuantity.toLocaleString()}</span>
                   </div>
                   <SteppedSlider
                     min={minQuantity}
@@ -168,33 +181,63 @@ export default function ServiceForm({ services }: ServiceFormProps) {
             }}
           />
         </div>
-        <div className="grow grid gap-2">
-          <Label htmlFor="link">Link</Label>
-          <Input
-            className=""
-            {...register("link")}
-            id="link"
-            type="text"
-            placeholder="Where user will go"
-          />
+
+        {/* Link input */}
+        <div className="grid gap-2">
+          <Label
+            htmlFor="link"
+            className="text-sm font-medium text-foreground"
+          >
+            Target Link
+          </Label>
+          <div className="relative">
+            <IconLink
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              className="pl-9 rounded-xl h-11 bg-muted/30 border-border/50"
+              {...register("link")}
+              id="link"
+              type="text"
+              placeholder="https://example.com/your-profile"
+            />
+          </div>
           {errors.link && <ErrorText message={"Invalid link"} />}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Price per unit : {selectedService.pricePerUnit / 1000}$
-        </p>
-        <Button variant={"secondary"} disabled={isLoading}>
-          {!isLoading && (
-            <div className="font-bold">
-              Price {(quantity * selectedService.pricePerUnit) / 1000}$
-            </div>
-          )}
-          {isLoading && (
-            <div className="flex items-center gap-4">
-              <Spinner className="size-4" />
-              <span>Ordering ...</span>
-            </div>
-          )}
-        </Button>
+
+        {/* Price summary and submit */}
+        <div className="flex flex-col gap-3 pt-2">
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-muted/30 border border-border/50">
+            <span className="text-sm text-muted-foreground">Total Price</span>
+            <span className="text-lg font-bold text-foreground">
+              ${totalPrice.toFixed(2)}
+            </span>
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center">
+            ${(selectedService.pricePerUnit / 1000).toFixed(3)} per unit
+          </p>
+
+          <Button
+            variant="secondary"
+            size="lg"
+            disabled={isLoading}
+            className="w-full rounded-xl h-12 text-base font-semibold"
+          >
+            {!isLoading ? (
+              <div className="flex items-center gap-2">
+                <IconShoppingCart size={18} />
+                <span>Place Order — ${totalPrice.toFixed(2)}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Spinner className="size-4" />
+                <span>Placing Order...</span>
+              </div>
+            )}
+          </Button>
+        </div>
       </div>
       <PaymentDialog
         open={open}
