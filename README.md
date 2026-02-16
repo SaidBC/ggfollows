@@ -315,5 +315,11 @@ This project is proprietary. All rights reserved.
 ---
 
 <p align="center">
+  <a href="https://www.facebook.com/ggfollows/">Facebook</a> •
+  <a href="https://www.youtube.com/channel/UCJPPYcvewBgFJwIzo0dtP-A">YouTube</a> •
+  <a href="https://www.tiktok.com/@ggfollows">TikTok</a>
+</p>
+
+<p align="center">
   Built with ❤️ by the <strong>GGfollows</strong> team
 </p>
