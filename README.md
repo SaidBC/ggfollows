@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/images/logo.svg" alt="GGfollows Logo" width="80" />
+  <img src="public/images/logo.jpg" alt="GGfollows Logo" width="80" />
 </p>
 
 <h1 align="center">GGfollows</h1>
