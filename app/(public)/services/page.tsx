@@ -1,4 +1,5 @@
 import ServiceSwitcher from "@/ui/(public)/services/ServiceSwitcher";
+import ServiceInfoSection from "@/ui/(public)/services/ServiceInfoSection";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,6 +40,9 @@ export default function Page() {
 
         {/* Service switcher */}
         <ServiceSwitcher />
+
+        {/* Info Section */}
+        <ServiceInfoSection />
       </div>
     </div>
   );
