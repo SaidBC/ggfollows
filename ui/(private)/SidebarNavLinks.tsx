@@ -21,21 +21,41 @@ interface SidebarNavLinksProps {
 
 export default function SidebarNavLinks({ items }: SidebarNavLinksProps) {
   const pathname = usePathname();
+  
   return (
-    <SidebarMenu>
-      {items.map((item) => (
-        <SidebarMenuItem
-          className={cn(pathname === item.href && "text-secondary")}
-          key={item.title}
-        >
-          <SidebarMenuButton asChild>
-            <Link href={item.href}>
-              <item.icon size={48} />
-              <span>{item.title}</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+    <SidebarMenu className="gap-1.5 pt-2">
+      {items.map((item) => {
+        const isActive = pathname === item.href;
+        
+        return (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton 
+              asChild 
+              className={cn(
+                "transition-all duration-300 h-10 px-3 rounded-xl",
+                isActive 
+                  ? "bg-secondary text-secondary-foreground shadow-lg shadow-secondary/20 hover:bg-secondary/90 hover:text-secondary-foreground font-bold" 
+                  : "text-muted-foreground hover:bg-secondary/10 hover:text-secondary group"
+              )}
+            >
+              <Link href={item.href} className="flex items-center gap-3">
+                <div className={cn(
+                  "transition-transform duration-300",
+                  isActive ? "scale-110" : "group-hover:scale-110 pr-1"
+                )}>
+                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                </div>
+                <span className={cn(
+                  "text-sm tracking-wide",
+                  isActive ? "font-bold" : "font-medium"
+                )}>
+                  {item.title}
+                </span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 }

@@ -21,53 +21,60 @@ export default function ProfileView({
   isLoading: boolean;
 }) {
   const { open } = useSidebar();
+  
   return (
     <div
       className={cn(
-        "flex items-center gap-2 bg-sidebar-accent rounded-md",
-        open ? "p-2" : "p-1"
+        "flex items-center gap-3 transition-all duration-300 overflow-hidden",
+        open 
+          ? "bg-secondary/5 border border-secondary/10 p-3 rounded-2xl backdrop-blur-sm" 
+          : "bg-transparent p-1 justify-center"
       )}
     >
       {!isLoading ? (
         <Avatar
           className={cn(
-            "rounded-full bg-muted-foreground",
-            open ? "text-lg h-10 w-10" : "text-xs h-6 w-6"
+            "transition-all duration-300 ring-2 ring-secondary/20",
+            open ? "h-11 w-11" : "h-8 w-8"
           )}
         >
           <AvatarImage src={profileImageUrl} alt={username} />
-          <AvatarFallback className="rounded-full bg-secondary text-secondary-foreground  flex items-center justify-center uppercase font-bold">
-            {firstname.charAt(0)}
-            {lastname.charAt(0)}
+          <AvatarFallback className="bg-linear-to-br from-secondary to-secondary/80 text-secondary-foreground font-black text-xs">
+            {firstname.charAt(0).toUpperCase()}
+            {lastname.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       ) : (
-        <div>
-          <Skeleton
-            className={cn(
-              "rounded-full bg-muted-foreground",
-              open ? "text-lg h-10 w-10" : "text-xs h-6 w-6"
-            )}
-          />
+        <Skeleton
+          className={cn(
+            "rounded-full bg-muted/20",
+            open ? "h-11 w-11" : "h-8 w-8"
+          )}
+        />
+      )}
+      
+      {open && (
+        <div className="flex flex-col min-w-0 flex-1">
+          {!isLoading ? (
+            <>
+              <span className="text-sm font-black text-foreground truncate group-hover:text-secondary transition-colors">
+                @{username}
+              </span>
+              {email && (
+                <EmailHidder
+                  className="text-muted-foreground/70"
+                  email={email}
+                />
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Skeleton className="w-24 h-3 bg-muted/20 rounded-full" />
+              <Skeleton className="w-20 h-2 bg-muted/20 rounded-full" />
+            </div>
+          )}
         </div>
       )}
-      {open &&
-        (!isLoading ? (
-          <div className="flex flex-col">
-            <span>@{username}</span>
-            {email && (
-              <EmailHidder
-                className="text-muted-foreground text-sm"
-                email={email}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <Skeleton className="w-32 h-2 bg-muted-foreground" />
-            <Skeleton className="w-32 h-2 bg-muted-foreground" />
-          </div>
-        ))}
     </div>
   );
 }
