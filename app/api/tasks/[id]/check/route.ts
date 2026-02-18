@@ -23,53 +23,68 @@ export async function POST(
     });
     if (!user) return fieldErrorResponse("root", "User not found", 404);
     const taskId = (await params).id;
-    const task = await prisma.task.findUnique({
-      where: { id: taskId },
-      select: {
-        id: true,
-        amount: true,
-        allowsMultiAccount: true,
-        userId: true,
-        _count: {
-          select: {
-            completions: {
-              where: {
-                OR: [
-                  {
-                    status: "VERIFIED",
-                    userId: user.id,
-                  },
-                  {
-                    status: "VERIFIED",
-                    completionProof: platformUsername,
-                  },
-                ],
+
+    const result = await prisma.$transaction(async (tx) => {
+      const task = await tx.task.findUnique({
+        where: { id: taskId },
+        select: {
+          id: true,
+          amount: true,
+          allowsMultiAccount: true,
+          userId: true,
+          quantity: true,
+          _count: {
+            select: {
+              completions: {
+                where: {
+                  status: "VERIFIED",
+                },
               },
             },
           },
         },
-      },
+      });
+
+      if (!task) throw { status: 404, message: "Task not found" };
+      if (task.userId === user.id)
+        throw { status: 400, message: "You cannot check your own task" };
+
+      // Check if task is already full
+      if (task._count.completions >= task.quantity) {
+        throw { status: 400, message: "This task has already reached its completion limit" };
+      }
+
+      // Check for duplicate completion by same user or same platform username (if multi-account not allowed)
+      const existingCompletion = await tx.taskCompletion.findFirst({
+        where: {
+          taskId: task.id,
+          status: "VERIFIED",
+          OR: [
+            { userId: user.id },
+            { completionProof: platformUsername },
+          ],
+        },
+      });
+
+      if (existingCompletion && !task.allowsMultiAccount) {
+        throw { status: 400, message: "You have already completed this task or the platform profile is already used" };
+      }
+
+      const taskCompletion = await tx.taskCompletion.create({
+        data: {
+          taskId: task.id,
+          completionProof: platformUsername,
+          userId: user.id,
+          status: "VERIFIED",
+        },
+      });
+
+      return { task, taskCompletion };
     });
-    if (!task) return fieldErrorResponse("root", "Task not found", 404);
-    if (task.userId === user.id)
-      return fieldErrorResponse("root", "You cannot check your own task", 400);
-    if (task._count.completions > 0 && !task.allowsMultiAccount)
-      return fieldErrorResponse(
-        "root",
-        "Cannot check with multiple accounts or profiles",
-        404
-      );
-    const taskCompletion = await prisma.taskCompletion.create({
-      data: {
-        taskId: task.id,
-        completionProof: platformUsername,
-        userId: user.id,
-        status: "VERIFIED",
-      },
-    });
+
     const { transaction } = await earnPoints(
       user.id,
-      task.amount,
+      result.task.amount,
       "TASK_COMPLETION"
     );
 
@@ -77,10 +92,14 @@ export async function POST(
       success: true,
       data: {
         transaction,
-        taskCompletion,
+        taskCompletion: result.taskCompletion,
       },
     });
-  } catch {
+  } catch (error: any) {
+    if (error.status) {
+      return fieldErrorResponse("root", error.message, error.status);
+    }
+    console.error("Check Task Error:", error);
     return fieldErrorResponse("root", "Internal server error", 500);
   }
 }

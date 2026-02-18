@@ -143,11 +143,10 @@ export async function GET(req: NextRequest) {
     }
 
     if (userId) where.userId = userId;
-    const total = await prisma.task.count({ where });
-    const tasks = await prisma.task.findMany({
+
+    // Fetch all tasks matching the where clause
+    const allMatchingTasks = await prisma.task.findMany({
       where: where,
-      take,
-      skip,
       include: {
         creator: {
           select: {
@@ -156,13 +155,28 @@ export async function GET(req: NextRequest) {
         },
         _count: {
           select: {
-            completions: true,
+            completions: {
+              where: { status: "VERIFIED" }
+            },
           },
         },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ success: true, data: { tasks, total } });
+    // Filter out full tasks only if we are browsing as a CLIENT (not looking at our own creator list)
+    // Actually, the user says "hide full tasks where it's have all completions". This usually applies to the general feed.
+    const filteredTasks = userId 
+      ? allMatchingTasks // If looking at specific user (likely own tasks), show all
+      : allMatchingTasks.filter(task => task._count.completions < task.quantity);
+
+    const total = filteredTasks.length;
+    const paginatedTasks = filteredTasks.slice(
+      skip || 0,
+      skip !== undefined ? (skip + (take || DEFAULT_LIMIT)) : undefined
+    );
+
+    return NextResponse.json({ success: true, data: { tasks: paginatedTasks, total } });
   } catch {
     return fieldErrorResponse("root", "Internal server error", 500);
   }
