@@ -61,7 +61,7 @@ export default function OrdersContainer() {
             <Spinner className="size-16 text-secondary mx-auto" />
           </div>
         ))}
-      <MainPagination page={page} lastPage={lastPage} />
+      {orders && orders.total > 0 && <MainPagination page={page} lastPage={lastPage} />}
       {orders && orders.total === 0 && (
         <div>
           <EmptyListMessage

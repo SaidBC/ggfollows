@@ -6,7 +6,6 @@ import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -16,92 +15,139 @@ import PointsIcon from "@/components/vectors/PointIcon";
 import { useGetUserTransactions } from "@/hooks/useGetTransaction";
 import siteConfig from "@/lib/siteConfig";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { IconHistory, IconArrowUpRight, IconArrowDownLeft, IconCheck } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function TableSection() {
   const { status, data: sessionData } = useSession();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const page = parseInt(searchParams.get("page") ?? "0") || 1;
   const userId = sessionData?.user.id;
+  
   const { data, isLoading, error } = useGetUserTransactions({
     userId,
     page,
   });
-  if (error) return <p>Error loading transactions</p>;
-  if (!isLoading && (!data || !data.success))
-    return <p>Error loading transactions</p>;
-  const transactions = data ? (data.success ? data.data : null) : null;
-  const lastPage = Math.ceil(
-    (transactions?.total || 0) / siteConfig.DEFAULT_LIMIT
-  );
+
+  if (error) return <div className="p-8 text-center text-destructive">Error loading transactions. Please try again.</div>;
+  
+  const transactionsData = data?.success ? data.data : null;
+  const transactions = transactionsData?.transactions || [];
+  const total = transactionsData?.total || 0;
+  
+  const lastPage = Math.ceil(total / siteConfig.DEFAULT_LIMIT);
 
   return (
-    <div className="px-4 lg:px-6 w-full">
-      <h1 className="font-bold text-3xl my-2 text-neutral-300">
-        Transactions :
-      </h1>
-      <Table>
-        <TableCaption>A list of user transactions history</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Id</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Source</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions &&
-            transactions.transactions.map((transaction) => {
+    <div className="px-4 lg:px-6 w-full space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+            <IconHistory size={20} />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              Recent Transactions
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              History of your points activity
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border/50 bg-card overflow-hidden shadow-sm">
+        <Table>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="hover:bg-transparent border-border/50">
+              <TableHead className="w-[100px] text-xs uppercase font-bold tracking-wider py-4">ID</TableHead>
+              <TableHead className="text-xs uppercase font-bold tracking-wider py-4">Status</TableHead>
+              <TableHead className="text-xs uppercase font-bold tracking-wider py-4">Source</TableHead>
+              <TableHead className="text-xs uppercase font-bold tracking-wider py-4">Date</TableHead>
+              <TableHead className="text-right text-xs uppercase font-bold tracking-wider py-4">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions.map((transaction) => {
               const date = new Date(transaction.createdAt);
-              const formatedDate = date.toUTCString();
-              const displayAmount =
-                transaction.type === "SPEND"
-                  ? `-${transaction.amount}`
-                  : `+${transaction.amount}`;
+              const formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              
+              const isSpend = transaction.type === "SPEND";
+              const displayAmount = isSpend
+                ? `-${transaction.amount}`
+                : `+${transaction.amount}`;
+
               return (
-                <TableRow key={transaction.id}>
-                  <TableCell className="font-medium">
-                    {transaction.id}
+                <TableRow key={transaction.id} className="border-border/40 hover:bg-muted/20 transition-colors">
+                  <TableCell className="font-mono text-[10px] text-muted-foreground/70">
+                    {transaction.id.slice(-8).toUpperCase()}
                   </TableCell>
                   <TableCell>
-                    <Badge className="bg-secondary">
-                      <div className="flex items-center gap-2">
-                        <div className="bg-green-800 rounded-2xl h-2 w-2"></div>
-                        <span>{"success"}</span>
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 px-2 py-0.5 rounded-lg text-[10px] font-bold">
+                      <div className="flex items-center gap-1.5">
+                        <IconCheck size={10} strokeWidth={3} />
+                        <span>SUCCESS</span>
                       </div>
                     </Badge>
                   </TableCell>
-                  <TableCell>{transaction.source}</TableCell>
-                  <TableCell>{formatedDate}</TableCell>
-                  <TableCell className="font-bold">
-                    <div className="flex items-center  justify-end gap-2">
-                      <PointsIcon />
+                  <TableCell className="text-sm font-medium">
+                    {transaction.source}
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {formattedDate}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className={cn(
+                      "flex items-center justify-end gap-1.5 font-bold tabular-nums",
+                      isSpend ? "text-rose-500" : "text-emerald-500"
+                    )}>
+                      {isSpend ? <IconArrowDownLeft size={14} /> : <IconArrowUpRight size={14} />}
                       <span>{displayAmount}</span>
+                      <PointsIcon width={14} height={14} />
                     </div>
                   </TableCell>
                 </TableRow>
               );
             })}
-        </TableBody>
-      </Table>
-      <MainPagination page={page} lastPage={lastPage} />
-      {transactions && transactions.total === 0 && (
-        <div className=" ">
-          <EmptyListMessage
-            className="@xl/main:flex-row @xl/main:text-left"
-            title="Your transaction history is empty"
-            description="Start claiming rewards to track your earned points."
-          />
+          </TableBody>
+        </Table>
+
+        {transactions.length === 0 && !isLoading && (
+          <div className="py-12 flex justify-center border-t border-border/50">
+            <EmptyListMessage
+              className="bg-transparent border-none"
+              title="No transactions yet"
+              description="Your points history will appear here once you start earning or spending points."
+              action={
+                <Button variant="secondary" asChild className="rounded-xl">
+                  <Link href="/tasks">Earn Points</Link>
+                </Button>
+              }
+            />
+          </div>
+        )}
+
+        {(isLoading || status === "loading") && (
+          <div className="py-12 flex justify-center border-t border-border/50 w-full">
+            <Spinner className="size-8 text-secondary" />
+          </div>
+        )}
+      </div>
+
+      {lastPage > 1 && (
+        <div className="flex justify-center pt-2">
+          <MainPagination page={page} lastPage={lastPage} />
         </div>
       )}
-      {isLoading ||
-        (status === "loading" && (
-          <div className="w-full py-8">
-            <Spinner className="size-16 text-secondary mx-auto" />
-          </div>
-        ))}
     </div>
   );
 }

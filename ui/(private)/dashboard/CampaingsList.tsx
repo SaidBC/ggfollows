@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import PointsIcon from "@/components/vectors/PointIcon";
 import { useGetCampaings } from "@/hooks/useGetCampaigns";
+import Link from "next/link";
 
 interface CampaignCardProps {
   title: string;
@@ -79,11 +80,15 @@ export default function CampaignList() {
         })}
       </div>
       {campaigns.length === 0 && (
-        <div className="self-center">
+        <div className="flex justify-center py-6">
           <EmptyListMessage
-            className="@xl/main:flex-row @xl/main:text-left"
-            title="No campaigns available right now"
-            description="New reward campaigns will appear here once they’re released."
+            title="No campaigns available"
+            description="All reward campaigns have been claimed. Check back later for new opportunities to earn points!"
+            action={
+              <Button variant="outline" asChild className="rounded-xl">
+                <Link href="/tasks">View Tasks</Link>
+              </Button>
+            }
           />
         </div>
       )}
