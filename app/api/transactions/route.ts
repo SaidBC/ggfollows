@@ -59,6 +59,7 @@ export async function GET(req: NextRequest) {
     const total = await prisma.pointTransaction.count({ where });
     const transactions = await prisma.pointTransaction.findMany({
       where: where,
+      orderBy: { createdAt: "desc" },
       take,
       skip,
     });

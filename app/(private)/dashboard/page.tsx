@@ -23,8 +23,14 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
+    <div className="flex flex-1 flex-col relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[5%] right-[10%] w-[30%] h-[30%] bg-secondary/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[20%] left-[5%] w-[40%] h-[40%] bg-secondary/5 blur-[100px] rounded-full animate-pulse [animation-delay:3s]" />
+      </div>
+
+      <div className="relative z-10 @container/main flex flex-1 flex-col gap-2">
         <div className="w-full py-4 flex justify-center">
           <AdBanner
             className=" @[728px]/main:w-[728px] @[728px]/main:h-[90px] @[468px]/main:w-[468px] @[468px]/main:h-[60px] w-[320px] h-[50px]"
