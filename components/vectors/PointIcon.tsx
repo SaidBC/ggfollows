@@ -1,10 +1,11 @@
+import { cn } from "@/lib/utils";
+
 export default function PointsIcon({
   width = 20,
   height = 20,
-}: {
-  width?: number;
-  height?: number;
-}) {
+  className,
+  ...props
+}: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +13,8 @@ export default function PointsIcon({
       viewBox="0 0 80 80"
       width={width}
       height={height}
-      className="__web-inspector-hide-shortcut__ select-none"
+      className={cn("__web-inspector-hide-shortcut__ select-none", className)}
+      {...props}
     >
       <g id="maker">
         <path
