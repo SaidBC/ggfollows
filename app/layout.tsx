@@ -9,6 +9,7 @@ import GoogleAnalytics from "@/ui/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/next";
 import clientEnv from "@/utils/clientEnv";
 import { Toaster } from "@/components/ui/sonner";
+import SupportChat from "@/components/SupportChat";
 
 const kablammo = Kablammo({
   variable: "--font-kablammo",
@@ -71,7 +72,10 @@ export default async function RootLayout({
         className={`dark ${geistSans.variable} ${geistMono.variable} ${kablammo.variable} ${caveatBrush.variable} antialiased font-sans`}
       >
         <AuthSessionProvider session={session}>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            {children}
+            <SupportChat />
+          </QueryProvider>
         </AuthSessionProvider>
         {clientEnv.NEXT_PUBLIC_NODE_ENV === "production" && <GoogleAnalytics />}
         {clientEnv.NEXT_PUBLIC_NODE_ENV === "production" && <Analytics />}

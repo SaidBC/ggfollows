@@ -75,6 +75,13 @@ enum PaymentProvider {
   PAYPAL
   CRYPTO
   ADMIN
+  STARS
+}
+
+enum SupportTicketStatus {
+  PENDING
+  OPEN
+  CLOSED
 }
 
 enum VerificationCodeReasons {
@@ -165,6 +172,8 @@ model User {
   currentStreak       Int       @default(0)
   lastDailyRewardDate DateTime?
   payments            Payment[]
+
+  supportTickets SupportTicket[]
 }
 
 // --- Points & Rewards ---
@@ -326,4 +335,19 @@ model Payment {
 
   createdAt   DateTime  @default(now())
   confirmedAt DateTime?
+}
+
+model SupportTicket {
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  email   String
+  subject String
+  message String @db.Text
+
+  status SupportTicketStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
