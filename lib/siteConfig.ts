@@ -12,6 +12,7 @@ import {
   IconHistory,
   IconReceipt,
   IconUsers,
+  IconMessage2,
 } from "@tabler/icons-react";
 
 const siteConfig = {
@@ -105,6 +106,11 @@ const siteConfig = {
       title: "Orders",
       icon: IconReceipt,
       href: "/admin/orders",
+    },
+    {
+      title: "Tickets",
+      icon: IconMessage2,
+      href: "/admin/support",
     },
     {
       title: "Transactions",
