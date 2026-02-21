@@ -12,61 +12,82 @@ import { Payment } from "@prisma/client";
 import PaymentDialog from "@/components/PaymentDialog";
 import ActiveOrderCard from "./ActiveOrderCard";
 
+import OrderTable from "./OrderTable";
+import { OrderStatus } from "@prisma/client";
+import { cn } from "@/lib/utils";
+
 export default function ActiveOrdersContainer() {
   const [open, setOpen] = useState(false);
   const [paymentData, setPaymentData] = useState<Payment | null>(null);
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "ALL">("ALL");
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") ?? "0") || 1;
   const { data, isLoading, error } = useGetOrders({
     page,
   });
-  if (error) return <p>Error loading orders</p>;
-  if (!isLoading && (!data || !data.success))
-    return <p>Error loading orders</p>;
+
+  if (error) return <p className="text-xs font-bold text-rose-500 uppercase tracking-widest italic">Error loading orders</p>;
+
   const orders = data ? (data.success ? data.data : null) : null;
   const lastPage = Math.ceil((orders?.total || 0) / siteConfig.DEFAULT_LIMIT);
+
   const onOpenPaymentDetails = (data: Payment) => {
-    return () => {
-      setPaymentData(data);
-      setOpen(true);
-    };
+    setPaymentData(data);
+    setOpen(true);
   };
+
+  const filteredOrders = (orders?.orders || []).filter(o => 
+    statusFilter === "ALL" || o.status === statusFilter
+  );
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid gap-4 @xl/main:grid-cols-2 @3xl/main:grid-cols-3">
-        {orders &&
-          orders &&
-          orders.orders.map((order) => (
-            <ActiveOrderCard
-              payment={order.payment}
-              onOpenPaymentDetails={onOpenPaymentDetails(order.payment)}
-              id={order.id}
-              platform={order.service.platform}
-              code={order.service.code}
-              quantity={order.quantity}
-              totalPrice={order.totalPrice}
-              link={order.link}
-              status={order.status}
-              key={order.id}
-            />
-          ))}
+    <div className="flex flex-col gap-6">
+      {/* Filters */}
+      <div className="flex items-center gap-2 bg-card/20 backdrop-blur-md border border-border/10 p-1.5 rounded-2xl self-start overflow-x-auto max-w-full no-scrollbar shadow-lg">
+        {(["ALL", ...Object.values(OrderStatus)] as const).map((status) => (
+          <button
+            key={status}
+            onClick={() => setStatusFilter(status)}
+            className={cn(
+              "px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
+              statusFilter === status 
+                ? "bg-secondary text-secondary-foreground shadow-lg shadow-secondary/20" 
+                : "text-muted-foreground/60 hover:text-foreground"
+            )}
+          >
+            {status}
+          </button>
+        ))}
       </div>
-      {isLoading && (
-        <div className="w-full py-8">
-          <Spinner className="size-16 text-secondary mx-auto" />
-        </div>
-      )}
-      <PaymentDialog open={open} onOpenChange={setOpen} payment={paymentData} />
-      <MainPagination page={page} lastPage={lastPage} />
-      {orders && orders.total === 0 && (
-        <div>
-          <EmptyListMessage
-            className="@xl/main:flex-row @xl/main:text-left"
-            title="Your transaction history is empty"
-            description="Start claiming rewards to track your earned points."
+
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-[2rem]">
+            <Spinner className="size-16 text-secondary mx-auto" />
+          </div>
+        )}
+        
+        {orders && orders.total > 0 && (
+          <OrderTable 
+            orders={filteredOrders as any} 
+            onOpenPaymentDetails={onOpenPaymentDetails} 
           />
-        </div>
-      )}
+        )}
+
+        {!isLoading && orders && (orders.total === 0 || filteredOrders.length === 0) && (
+          <EmptyListMessage
+            className="bg-card/20 border border-border/10 rounded-[2rem] p-12"
+            title="No orders found"
+            description="The system currently has no orders matching your selected status filter."
+          />
+        )}
+      </div>
+
+      <div className="flex justify-center pt-4">
+        <MainPagination page={page} lastPage={lastPage} />
+      </div>
+
+      <PaymentDialog open={open} onOpenChange={setOpen} payment={paymentData} />
     </div>
   );
 }

@@ -120,6 +120,11 @@ export async function GET(req: NextRequest) {
     const auth = await isAuthenticated(req);
     if (!auth.isSuccess) return auth.response;
 
+    const user = await prisma.user.findUnique({
+      where: { id: auth.data.id },
+      select: { role: true }
+    });
+
     const where: Prisma.TaskWhereInput = {};
     let take: number | undefined = DEFAULT_LIMIT;
     let skip: number | undefined;
@@ -128,6 +133,7 @@ export async function GET(req: NextRequest) {
     const userId = searchParams.get("userId");
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
+    const isAdminView = searchParams.get("admin") === "true" && user?.role === "ADMIN";
 
     if (page) {
       const pageValue = parseInt(page);
@@ -165,9 +171,9 @@ export async function GET(req: NextRequest) {
     });
 
     // Filter out full tasks only if we are browsing as a CLIENT (not looking at our own creator list)
-    // Actually, the user says "hide full tasks where it's have all completions". This usually applies to the general feed.
-    const filteredTasks = userId 
-      ? allMatchingTasks // If looking at specific user (likely own tasks), show all
+    // AND not in admin view
+    const filteredTasks = (userId || isAdminView)
+      ? allMatchingTasks // If looking at specific user (likely own tasks) or admin view, show all
       : allMatchingTasks.filter(task => task._count.completions < task.quantity);
 
     const total = filteredTasks.length;
