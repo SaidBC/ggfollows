@@ -1,12 +1,9 @@
-"use client";
-
-import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AdminHeaderProps {
   title: string;
   description?: string;
-  icon: any; // Tabler icons or Lucide icons
+  icon: React.ComponentType<{ size?: number; stroke?: number }>;
   className?: string;
 }
 
