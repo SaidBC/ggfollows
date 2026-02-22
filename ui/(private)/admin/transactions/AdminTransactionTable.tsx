@@ -30,17 +30,14 @@ interface AdminTransactionTableProps {
 export default function AdminTransactionTable({ transactions }: AdminTransactionTableProps) {
   const getTypeStyle = (type: TransactionType) => {
     switch (type) {
-      case "EARNED":
-      case "REFUNDED":
+      case "EARN":
         return {
           icon: <ArrowUpRight className="h-4 w-4 text-emerald-500" />,
           color: "text-emerald-500",
           bg: "bg-emerald-500/10",
           border: "border-emerald-500/20"
         };
-      case "SPENT":
-      case "PENALTY":
-      case "WITHDRAWN":
+      case "SPEND":
         return {
           icon: <ArrowDownRight className="h-4 w-4 text-rose-500" />,
           color: "text-rose-500",
