@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { IconChevronRight, IconScale } from "@tabler/icons-react";
+import siteConfig from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Terms of Service — GGfollows",
@@ -259,13 +260,13 @@ export default function TermsPage() {
                 For support or questions regarding these terms, please reach out via our official channels:
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a href="mailto:support@ggfollows.com" className="flex items-center gap-3 p-4 bg-muted hover:bg-muted/80 rounded-2xl transition-all group">
+                <a href={`mailto:${siteConfig.SUPPORT_EMAIL}`} className="flex items-center gap-3 p-4 bg-muted hover:bg-muted/80 rounded-2xl transition-all group">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     📧
                   </div>
                   <div>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-tight">Email Support</p>
-                    <p className="text-sm font-semibold">support@ggfollows.com</p>
+                    <p className="text-sm font-semibold">{siteConfig.SUPPORT_EMAIL}</p>
                   </div>
                 </a>
                 <Link href="/" className="flex items-center gap-3 p-4 bg-muted hover:bg-muted/80 rounded-2xl transition-all group">

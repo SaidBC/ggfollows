@@ -17,6 +17,7 @@ import {
 
 const siteConfig = {
   DEFAULT_LIMIT: 5,
+  SUPPORT_EMAIL: "ggfollows.officiel@gmail.com",
   publicNavLinks: [
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },

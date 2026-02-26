@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { IconChevronRight, IconShieldCheck } from "@tabler/icons-react";
+import siteConfig from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — GGfollows",
@@ -184,8 +185,8 @@ export default function PrivacyPolicyPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground pt-3">
-                To exercise these rights, please contact us at: <a href="mailto:support@ggfollows.com" className="text-primary font-bold hover:underline">support@ggfollows.com</a>
+              <p className="text-sm text-muted-foreground pt-3">  
+                To exercise these rights, please contact us at: <a href={`mailto:${siteConfig.SUPPORT_EMAIL}`} className="text-primary font-bold hover:underline">{siteConfig.SUPPORT_EMAIL}</a>
               </p>
             </section>
 
@@ -228,7 +229,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-primary-foreground/80 max-w-xl mx-auto">
             Our support team is here to help you understand how we protect your information. 
           </p>
-          <a href="mailto:support@ggfollows.com" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-primary font-bold hover:bg-white/90 transition-all shadow-md active:scale-95">
+          <a href="mailto:ggfollows.officiel@gmail.com" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-primary font-bold hover:bg-white/90 transition-all shadow-md active:scale-95">
              Contact Support
           </a>
         </div>
