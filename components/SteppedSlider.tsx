@@ -10,10 +10,7 @@ interface SteppedSliderProps {
   min: number;
   max: number;
   steps: number[];
-  field: ControllerRenderProps<
-    { quantity: number; code: string; link: string },
-    "quantity"
-  >;
+  field: ControllerRenderProps<any, any>;
 }
 
 export default function SteppedSlider({

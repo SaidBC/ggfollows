@@ -23,6 +23,7 @@ import { IconBolt, IconShoppingCart, IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import Link from "next/link";
 import z from "zod";
 
 const MIN = 0;
