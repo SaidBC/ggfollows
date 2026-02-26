@@ -12,6 +12,12 @@ const signUpSchema = z
     username: usernameSchema,
     email: emailSchema,
     password: passwordSchema,
+    acceptedTerms: z
+      .boolean()
+      .refine(
+        (val) => val === true,
+        "You must accept the terms and conditions"
+      ),
     confirm_password: z.string({
       error: "Confirm password is required",
     }),

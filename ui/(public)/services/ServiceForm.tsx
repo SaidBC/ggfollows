@@ -3,6 +3,7 @@ import ErrorText from "@/components/ErrorText";
 import PaymentDialog from "@/components/PaymentDialog";
 import SteppedSlider from "@/components/SteppedSlider";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -218,6 +219,47 @@ export default function ServiceForm({ services }: ServiceFormProps) {
           <p className="text-xs text-muted-foreground text-center">
             ${(selectedService.pricePerUnit / 1000).toFixed(3)} per unit
           </p>
+
+          <div className="flex flex-col gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <Controller
+                control={control}
+                name="acceptedTerms"
+                render={({ field }) => (
+                  <Checkbox
+                    id="acceptedTerms-service"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="border-secondary data-[state=checked]:bg-secondary"
+                  />
+                )}
+              />
+              <Label
+                htmlFor="acceptedTerms-service"
+                className="text-xs font-medium leading-none cursor-pointer text-muted-foreground"
+              >
+                I agree to the{" "}
+                <Link href="/terms" target="_blank" className="text-secondary hover:underline">
+                  Terms
+                </Link>{" "}
+                &{" "}
+                <Link
+                  href="/privacy-policy"
+                  target="_blank"
+                  className="text-secondary hover:underline"
+                >
+                  Privacy
+                </Link>
+              </Label>
+            </div>
+            {errors.acceptedTerms && (
+              <ErrorText
+                message={
+                  errors.acceptedTerms.message || "Required"
+                }
+              />
+            )}
+          </div>
 
           <Button
             variant="secondary"

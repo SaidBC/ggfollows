@@ -12,11 +12,18 @@ import {
 import { BuiltInProviderType } from "next-auth/providers/index";
 import ErrorText from "@/components/ErrorText";
 
-export default function SocialLogin() {
+interface SocialLoginProps {
+  acceptedTerms?: boolean;
+}
+
+export default function SocialLogin({ acceptedTerms }: SocialLoginProps) {
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function handleLogin(provider: LiteralUnion<BuiltInProviderType>) {
+    if (!acceptedTerms) {
+      return setError("Please accept the terms and privacy policy first");
+    }
     if (provider !== "google")
       return setError(
         "This login method not supported for now, Try with google"

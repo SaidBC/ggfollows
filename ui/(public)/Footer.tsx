@@ -135,6 +135,30 @@ export default function Footer() {
                   View Plans
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cookie-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -147,6 +171,24 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} GGfollows. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
+            <Link
+              href="/terms"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              href="/privacy-policy"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/cookie-policy"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              Cookie Policy
+            </Link>
             {socialLinks.map((link) => (
               <a
                 key={link.label}

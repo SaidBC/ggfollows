@@ -12,10 +12,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "@/lib/schemas/loginSchema";
 import ErrorText from "@/components/ErrorText";
+import { Checkbox } from "@/components/ui/checkbox";
 import z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SocialLogin from "./SocialLogin";
+import { Controller } from "react-hook-form";
 
 export function LoginCard({
   className,
@@ -25,8 +27,10 @@ export function LoginCard({
   const {
     handleSubmit,
     register,
+    control,
     formState: { errors, isLoading },
     setError,
+    watch,
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -105,6 +109,45 @@ export function LoginCard({
                   />
                 )}
               </div>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Controller
+                    control={control}
+                    name="acceptedTerms"
+                    render={({ field }) => (
+                      <Checkbox
+                        id="acceptedTerms"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <Label
+                    htmlFor="acceptedTerms"
+                    className="text-sm font-medium leading-none cursor-pointer"
+                  >
+                    I accept the{" "}
+                    <Link href="/terms" className="text-primary hover:underline">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="text-primary hover:underline"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </Label>
+                </div>
+                {errors.acceptedTerms && (
+                  <ErrorText
+                    message={
+                      errors.acceptedTerms.message ||
+                      "You must accept the terms"
+                    }
+                  />
+                )}
+              </div>
               <Button
                 variant={"secondary"}
                 disabled={isLoading}
@@ -118,7 +161,7 @@ export function LoginCard({
                   Or continue with
                 </span>
               </div>
-              <SocialLogin />
+              <SocialLogin acceptedTerms={watch("acceptedTerms")} />
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
                 <Link
