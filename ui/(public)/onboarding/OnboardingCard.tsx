@@ -50,7 +50,7 @@ export default function OnboardingCard({
       username: "",
     },
   });
-  const { mutate } = useUpdateUser();
+  const { mutate ,isPending } = useUpdateUser();
   const onSubmit: SubmitHandler<z.output<typeof onboardingSchema>> = function (
     data
   ) {
@@ -164,11 +164,11 @@ export default function OnboardingCard({
               </div>
               <Button
                 variant={"secondary"}
-                disabled={isLoading}
+                disabled={isLoading || isPending}
                 type="submit"
                 className="w-full"
               >
-                Confirm
+                {isPending ?<Spinner className="size-4" />  : "Confirm"}
               </Button>
 
               {errors.root && (

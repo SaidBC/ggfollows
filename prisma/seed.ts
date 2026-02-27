@@ -1,6 +1,7 @@
 // prisma/seed.ts
 import prisma from "@/lib/prisma";
 import siteConfig from "@/lib/siteConfig";
+import bcrypt from "bcrypt";
 
 async function seedDefaultServices() {
   const { SERVICES } = siteConfig;
@@ -23,7 +24,21 @@ async function seedDefaultServices() {
   console.log("✅ Services seeded");
 }
 
+async function  SeedTestUser() {
+  const password = await bcrypt.hash("test1235", 10);
+  await prisma.user.create({
+    data: {
+      email: "test1235@test.com",
+      name: "elon musk",
+      password: password,
+    },
+  });
+    console.log("✅ Test user seeded");
+
+}
+
 async function main() {
+  await SeedTestUser()
   await seedDefaultServices();
 }
 
