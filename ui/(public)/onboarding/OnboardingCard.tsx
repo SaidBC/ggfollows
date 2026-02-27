@@ -34,7 +34,7 @@ export default function OnboardingCard({
       `GG_${user?.name?.split(" ")[0] || "user"}_${Math.floor(
         Math.random() * 1000
       )}`,
-    []
+    [user?.name]
   );
   const {
     handleSubmit,
@@ -50,7 +50,7 @@ export default function OnboardingCard({
       username: "",
     },
   });
-  const { mutate ,isPending } = useUpdateUser();
+  const { mutate, isPending } = useUpdateUser();
   const onSubmit: SubmitHandler<z.output<typeof onboardingSchema>> = function (
     data
   ) {
@@ -66,8 +66,23 @@ export default function OnboardingCard({
           }
         }
         if (data.success) {
-          await update({ user: data.data });
-          router.push("/dashboard");
+          try {
+            await update({
+              user: {
+                id: data.data.id,
+                name: data.data.name,
+                email: data.data.email,
+                image: data.data.image,
+                username: data.data.username,
+                role: data.data.role,
+                bio: data.data.bio,
+                emailVerified: data.data.emailVerified,
+              },
+            });
+          } finally {
+            router.replace("/dashboard");
+            router.refresh();
+          }
         }
       },
     });
@@ -100,7 +115,7 @@ export default function OnboardingCard({
                 <h1 className="text-2xl font-bold my-4">Just one step left</h1>
                 <p className="text-muted-foreground flex gap-x-2  items-center flex-wrap justify-center">
                   <span>Welcome to</span> <LogoText size="sm" />{" "}
-                  <span>! Let's Complete Your Profile</span>
+                  <span>! Let&apos;s Complete Your Profile</span>
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-6">
@@ -171,7 +186,7 @@ export default function OnboardingCard({
                 type="submit"
                 className="w-full"
               >
-                {isPending ?<Spinner className="size-4" />  : "Confirm"}
+                {isPending ? <Spinner className="size-4" /> : "Confirm"}
               </Button>
 
               {errors.root && (
