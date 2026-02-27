@@ -24,6 +24,9 @@ import {
 import ErrorText from "@/components/ErrorText";
 import { IconCheck, IconLoader2, IconRefresh } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function VerifyEmailForm() {
   const form = useForm({
@@ -34,12 +37,22 @@ export default function VerifyEmailForm() {
   });
 
   const { isSubmitting } = form.formState;
+  const router = useRouter();
+  const { update } = useSession();
 
   const onSubmit = async function (data: z.output<typeof emailVerifySchema>) {
     try {
       const { success, field, message } = await verifyEmailCodeAction(data);
-      if (!success) return form.setError(field as any, { message: message });
+      if (!success) {
+        toast.error(message || "Verification failed");
+        return form.setError(field as any, { message: message });
+      }
+
+      toast.success("Email verified successfully!");
+      await update();
+      router.push("/dashboard");
     } catch (error) {
+      toast.error("Unexpected error occurred");
       form.setError("root", { message: "Unexpected error occurred" });
     }
   };
