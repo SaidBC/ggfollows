@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { ensureTestUser, cleanUpTestData, disconnectPrisma } from "../utils/db-helpers";
+import { fillLoginForm } from "../utils/test-helpers";
 
 test.describe("Admin Panel Protection", () => {
   const adminEmail = `adminuser_${Date.now()}@test.com`;
@@ -23,8 +24,7 @@ test.describe("Admin Panel Protection", () => {
   test("Non-admin user cannot access admin routes", async ({ page }) => {
     // Login as normal user
     await page.goto("/auth/login");
-    await page.fill('input[name="email"]', normalEmail);
-    await page.fill('input[name="password"]', testPassword);
+    await fillLoginForm(page, normalEmail, testPassword);
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/.*\/dashboard/);
 
@@ -39,8 +39,7 @@ test.describe("Admin Panel Protection", () => {
   test("Admin user can access admin routes", async ({ page }) => {
     // Login as admin user
     await page.goto("/auth/login");
-    await page.fill('input[name="email"]', adminEmail);
-    await page.fill('input[name="password"]', testPassword);
+    await fillLoginForm(page, adminEmail, testPassword);
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/.*\/dashboard/);
 

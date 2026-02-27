@@ -229,6 +229,7 @@ export default function ServiceForm({ services }: ServiceFormProps) {
                 render={({ field }) => (
                   <Checkbox
                     id="acceptedTerms-service"
+                    name="acceptedTerms"
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     className="border-secondary data-[state=checked]:bg-secondary"

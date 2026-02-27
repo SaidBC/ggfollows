@@ -13,7 +13,7 @@ test("user can log in", async ({ page }) => {
 
   await page.fill("#email", "test@example.com");
   await page.fill("#password", "Password123!");
-
+  await page.check("#acceptedTerms");
   await page.click('button[type="submit"]');
 
   await expect(page).toHaveURL(/dashboard/);

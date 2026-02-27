@@ -17,6 +17,7 @@ test("user can sign up successfully", async ({ page }) => {
   await page.fill("#email", email);
   await page.fill("#password", "Password123!");
   await page.fill("#confirm_password", "Password123!");
+  await page.check("#acceptedTerms");
 
   await page.click('button[type="submit"]');
 
@@ -34,6 +35,7 @@ test("signup fails with duplicate email", async ({ page }) => {
   await page.fill("#email", "duplicate@example.com");
   await page.fill("#password", "Password123!");
   await page.fill("#confirm_password", "Password123!");
+  await page.check("#acceptedTerms");
 
   await page.click('button[type="submit"]');
 

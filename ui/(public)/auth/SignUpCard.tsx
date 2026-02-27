@@ -193,6 +193,7 @@ export function SignUpCard({
                     render={({ field }) => (
                       <Checkbox
                         id="acceptedTerms"
+                        name="acceptedTerms"
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />

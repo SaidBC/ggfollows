@@ -110,6 +110,7 @@ export default function OnboardingCard({
                     {...register("firstname")}
                     id="firstname"
                     type="text"
+                    name="firstname"
                     placeholder="Elon"
                     required
                   />
@@ -125,6 +126,7 @@ export default function OnboardingCard({
                     {...register("lastname")}
                     id="lastname"
                     type="text"
+                    name="lastname"
                     placeholder="Musk"
                     required
                   />
@@ -140,6 +142,7 @@ export default function OnboardingCard({
                 <Input
                   {...register("username")}
                   id="username"
+                  name="username"
                   type="text"
                   placeholder="abcd123"
                   required

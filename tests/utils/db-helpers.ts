@@ -1,3 +1,4 @@
+import { Page } from "@playwright/test";
 import { PrismaClient, TaskPlatform, Role } from "@prisma/client";
 import bcrypt from "bcrypt";
 
@@ -6,7 +7,7 @@ const prisma = new PrismaClient();
 /**
  * Creates a test user with a specific password and role.
  */
-export async function createTestUser(email: string, username: string, role: Role = "USER") {
+export async function createTestUser(email: string, username?: string, role: Role = "USER") {
   const password = await bcrypt.hash("Password123!", 10);
   
   return prisma.user.create({
@@ -94,3 +95,5 @@ export async function cleanUpTestData() {
 export async function disconnectPrisma() {
     await prisma.$disconnect();
 }
+
+

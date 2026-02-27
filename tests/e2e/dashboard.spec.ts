@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { ensureTestUser, cleanUpTestData, disconnectPrisma } from "../utils/db-helpers";
+import { fillLoginForm } from "../utils/test-helpers";
 
 test.describe("Dashboard & Point Integration", () => {
   const testEmail = `dashuser_${Date.now()}@test.com`;
@@ -19,8 +20,7 @@ test.describe("Dashboard & Point Integration", () => {
   test.beforeEach(async ({ page }) => {
     // Login before each test in this suite
     await page.goto("/auth/login");
-    await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="password"]', testPassword);
+    await fillLoginForm(page, testEmail, testPassword);
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/.*\/dashboard/);
   });
