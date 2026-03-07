@@ -26,64 +26,64 @@ const siteConfig = {
   ],
   howItWorksSteps: [
     {
-      title: "1. Join & Get Free Points",
+      title: "1. Join the Growth Community",
       description:
-        "Create your free GGfollows account — you’ll get 100 points instantly to start growing.",
-      image: { src: "/images/join-illustration.svg", alt: "Join Illustration" },
+        "Create your free account and join thousands of creators in our organic social media growth community.",
+      image: { src: "/images/join-illustration.svg", alt: "Join GGfollows" },
     },
     {
-      title: "2. Follow Other Creators",
+      title: "2. Engage with Other Creators",
       description:
-        "Spend a few minutes connecting with others. Every follow you give earns you points back.",
+        "Our follow for follow system allows you to earn points by engaging with real users on your favorite platforms.",
       image: {
         src: "/images/social-dashboard-illustration.svg",
-        alt: "Follow Illustration",
+        alt: "Follow for follow engagement",
       },
     },
     {
-      title: "3. Earn & Spend Points",
+      title: "3. Get Real Followers & Likes",
       description:
-        "Use your points to get followers, likes, or subs from real users on your selected platform.",
+        "Exchange your points for free Instagram followers, TikTok views, or YouTube subscribers from active accounts.",
       image: {
         src: "/images/coins-illustration.svg",
-        alt: "Earn and Spend Illustration",
+        alt: "Social media engagement exchange",
       },
     },
     {
-      title: "4. Track Your Growth",
+      title: "4. Watch Your Accounts Grow",
       description:
-        "Watch your social stats grow from your GGfollows dashboard.",
+        "Track your organic social media growth in real-time. Safe, secure, and no password required.",
       image: {
         src: "/images/social-growth-illustration.svg",
-        alt: "Track Growth Illustration",
+        alt: "Organic social media growth tracking",
       },
     },
   ],
   faq: [
     {
-      question: "Is it safe to use GGfollows?",
+      question: "Is it safe to get free followers with GGfollows?",
       answer:
-        "Yes, GGfollows is built to help creators grow organically and securely. You never need to share your password or private data. All follows and interactions happen directly on the official social media platforms, so your account stays fully under your control.",
+        "Absolutely. GGfollows is designed for safe social media growth. We never ask for your password, and all engagement comes from real users through our secure exchange platform, ensuring your account stays protected.",
     },
     {
-      question: "Can I lose my followers after I get them?",
+      question: "How does the follower exchange work?",
       answer:
-        "In some cases, yes. Like any follow-for-follow system, a small percentage of users may unfollow later. GGfollows rewards trustworthy members who stay connected, and users who unfollow others lose their reputation and points. This keeps the community fair and focused on real engagement.",
+        "Our platform uses a simple follow for follow and engagement exchange model. You earn points by interacting with other creators, which you can then spend to receive followers, likes, and subscribers for your own profile.",
     },
     {
-      question: "Do I need to give my password?",
+      question: "Are these real followers or bots?",
       answer:
-        "No. GGfollows will never ask for your social media password. All actions such as following or liking happen directly on the platform using your own account. Your account security always comes first.",
+        "GGfollows is a community of real people helping each other grow. You receive engagement from active social media users who participate in our exchange, ensuring organic and authentic growth for your accounts.",
     },
     {
       question: "What social networks do you support?",
       answer:
-        "Currently, GGfollows supports Instagram, TikTok, YouTube, and X (Twitter). More platforms such as Threads and Facebook Pages will be added soon.",
+        "We currently support major platforms including Instagram, TikTok, YouTube, X (Twitter), and Facebook. Our social media growth platform is constantly expanding to include more engagement services.",
     },
     {
-      question: "How can I earn more points?",
+      question: "How can I grow social media followers faster?",
       answer:
-        "You can earn more points by following other users, completing daily missions, inviting friends, and staying active. Active members often receive loyalty rewards and surprise bonuses.",
+        "By staying active in our engagement exchange! Follow more creators to earn points quickly, complete daily missions, and invite friends to maximize your social media engagement and reach.",
     },
   ],
   adminSidebarNavLinks: [

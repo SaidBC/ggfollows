@@ -32,36 +32,24 @@ export default function HeroSection() {
   return (
     <section className="flex flex-col gap-16">
       {/* Main hero content */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+      <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-16">
         {/* Left side - Text content */}
         <div className="flex flex-col gap-8 text-center lg:text-start items-center lg:items-start lg:max-w-xl">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/15 border border-secondary/30 text-sm text-secondary w-fit">
-            <IconStarFilled size={14} />
-            <span className="font-medium">
-              Join now & get 100 free points
-            </span>
-          </div>
-
           {/* Heading */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
-              Grow Your Social
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
+              The Best Social Media
               <br />
-              <span className="relative">
-                <span className="bg-gradient-to-r from-secondary via-green-400 to-emerald-400 bg-clip-text text-transparent">
-                  Media Presence
-                </span>
+              <span className="bg-gradient-to-r from-secondary via-green-400 to-emerald-400 bg-clip-text text-transparent">
+                Growth Platform
               </span>
-              <br />
-              Organically
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-              Follow others, earn points, and watch your followers grow —{" "}
+              Boost your reach with our{" "}
               <span className="text-foreground font-medium">
-                no bots, just real people
-              </span>{" "}
-              helping each other.
+                organic engagement exchange
+              </span>. 
+              Get free Instagram followers, TikTok views, and YouTube subscribers from real people.
             </p>
           </div>
 
