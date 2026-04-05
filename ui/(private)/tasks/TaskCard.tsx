@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { IconAlertCircle, IconExternalLink, IconProgressCheck, IconReload, IconUser } from "@tabler/icons-react";
 import { useActivateTask } from "@/hooks/useActivateTask";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 type TaskCardProps = {
   id: string;
