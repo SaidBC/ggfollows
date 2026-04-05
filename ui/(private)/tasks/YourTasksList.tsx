@@ -76,6 +76,7 @@ export default function YourTasksList() {
             id={task.id}
             view="CREATOR"
             creator={task.creator}
+            expiresAt={task.expiresAt}
           />
         ))}
       </div>

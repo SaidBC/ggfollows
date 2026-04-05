@@ -32,7 +32,8 @@ import {
   IconUsers, 
   IconPencil,
   IconArrowRight,
-  IconRocket
+  IconRocket,
+  IconAlertCircle
 } from "@tabler/icons-react";
 
 export default function CreateTaskForm() {
@@ -312,6 +313,18 @@ export default function CreateTaskForm() {
                 />
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Expiration Warning */}
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex gap-3 items-start">
+          <IconAlertCircle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-amber-500 uppercase tracking-wider">Note on Task Expiration</h4>
+            <p className="text-sm text-foreground/80 leading-relaxed">
+              Your task will remain active for 24 hours. After that, it will become inactive. 
+              You can manually reactivate it at any time from your tasks dashboard to keep it running.
+            </p>
           </div>
         </div>
 

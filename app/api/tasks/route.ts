@@ -49,8 +49,15 @@ export async function POST(req: NextRequest) {
       !user.lastTaskCreatedAt ||
       user.lastTaskCreatedAt.toDateString() !== now.toDateString();
 
+    const activeTasksCount = await prisma.task.count({
+      where: {
+        userId: auth.data.id,
+        expiresAt: { gt: now },
+      },
+    });
+
     const isActiveLimitReached =
-      user._count.createdTasks >=
+      activeTasksCount >=
       siteConfig.TASK_ACTIVE_LIMITS[isExpired ? "FREE" : user.plan];
 
     const limitCount = isNewDay ? 0 : user.dailyTasksCreatedCount;
@@ -75,6 +82,8 @@ export async function POST(req: NextRequest) {
     }
 
     const task = await prisma.$transaction(async (tx) => {
+      const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+
       const data = await tx.task.create({
         data: {
           title,
@@ -84,6 +93,7 @@ export async function POST(req: NextRequest) {
           link,
           platform,
           userId: auth.data.id,
+          expiresAt,
         },
       });
       await tx.user.update({
@@ -172,9 +182,15 @@ export async function GET(req: NextRequest) {
 
     // Filter out full tasks only if we are browsing as a CLIENT (not looking at our own creator list)
     // AND not in admin view
-    const filteredTasks = (userId || isAdminView)
+    let filteredTasks = (userId || isAdminView)
       ? allMatchingTasks // If looking at specific user (likely own tasks) or admin view, show all
       : allMatchingTasks.filter(task => task._count.completions < task.quantity);
+
+    // Also filter out expired tasks for public view
+    if (!userId && !isAdminView) {
+      const now = new Date();
+      filteredTasks = filteredTasks.filter((task: any) => !task.expiresAt || new Date(task.expiresAt) > now);
+    }
 
     const total = filteredTasks.length;
     const paginatedTasks = filteredTasks.slice(

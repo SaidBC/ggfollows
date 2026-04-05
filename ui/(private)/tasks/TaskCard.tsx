@@ -8,7 +8,9 @@ import { Icon, IconProps } from "@tabler/icons-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import DeleteTaskButton from "./DeleteTaskButton";
 import { cn } from "@/lib/utils";
-import { IconExternalLink, IconProgressCheck, IconUser } from "@tabler/icons-react";
+import { IconAlertCircle, IconExternalLink, IconProgressCheck, IconReload, IconUser } from "@tabler/icons-react";
+import { useActivateTask } from "@/hooks/useActivateTask";
+import { Spinner } from "@/components/ui/spinner";
 
 type TaskCardProps = {
   id: string;
@@ -21,10 +23,13 @@ type TaskCardProps = {
   platformLink: string;
   view: "CREATOR" | "CLIENT";
   creator: { username: string };
+  expiresAt?: Date | string;
 };
 
 export default function TaskCard(task: TaskCardProps) {
   const progress = (task.complated / task.max) * 100;
+  const isExpired = task.expiresAt ? new Date(task.expiresAt) < new Date() : false;
+  const { mutate: activate, isPending: isActivating } = useActivateTask();
   
   return (
     <div className="group relative overflow-hidden bg-card/40 backdrop-blur-sm border border-border/50 rounded-2xl p-5 hover:bg-card/60 transition-all duration-300 shadow-sm hover:shadow-secondary/5 hover:border-secondary/20 flex flex-col sm:flex-row gap-6">
@@ -41,9 +46,14 @@ export default function TaskCard(task: TaskCardProps) {
               {task.title}
             </h2>
             {task.view === "CREATOR" && (
-              <Badge variant="outline" className="text-[10px] font-bold py-0 h-4 border-secondary/20 text-secondary">
-                YOUR TASK
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className={cn(
+                  "text-[10px] font-bold py-0 h-4 border-secondary/20 text-secondary",
+                  isExpired && "border-destructive/20 text-destructive bg-destructive/5"
+                )}>
+                  {isExpired ? "EXPIRED" : "YOUR TASK"}
+                </Badge>
+              </div>
             )}
           </div>
           
@@ -104,7 +114,19 @@ export default function TaskCard(task: TaskCardProps) {
             </Link>
           </>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-2">
+            {isExpired && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full h-8 text-[10px] font-bold gap-1.5 border-amber-500/20 text-amber-500 hover:bg-amber-500/5 hover:text-amber-600 transition-all"
+                onClick={() => activate(task.id)}
+                disabled={isActivating}
+              >
+                {isActivating ? <Spinner className="size-3" /> : <IconReload size={14} />}
+                <span>ACTIVATE</span>
+              </Button>
+            )}
             <DeleteTaskButton taskId={task.id} />
           </div>
         )}

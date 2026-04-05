@@ -59,6 +59,7 @@ export default function TasksList() {
             description={task.description || undefined}
             view="CLIENT"
             creator={task.creator}
+            expiresAt={(task as any).expiresAt}
           />
         ))}
       </div>

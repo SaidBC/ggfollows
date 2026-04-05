@@ -6,7 +6,7 @@ const BASE_URL = clientEnv.NEXT_PUBLIC_API_URL;
 
 export default async function apiTanstack<T>(
   url: string,
-  method: "GET" | "POST" = "GET",
+  method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
   data?: any
 ) {
   const headers: Record<string, string> = {

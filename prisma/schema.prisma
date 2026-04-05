@@ -7,7 +7,207 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- Enums ---
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String?
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model VerificationCode {
+  id          String                  @id @default(cuid())
+  reason      VerificationCodeReasons @default(EMAIL_VERIFICATION)
+  code        Int
+  codeExpires DateTime
+  email       String
+  createdAt   DateTime                @default(now())
+  user        User                    @relation(fields: [email], references: [email], onDelete: Cascade)
+}
+
+model User {
+  id                     String             @id @default(cuid())
+  role                   Role               @default(USER)
+  email                  String?            @unique
+  username               String?            @unique
+  firstname              String?
+  lastname               String?
+  name                   String?
+  password               String?
+  emailVerified          DateTime?
+  image                  String?
+  bio                    String?
+  points                 Int                @default(0)
+  currentStreak          Int                @default(0)
+  lastDailyRewardDate    DateTime?
+  plan                   PlanType           @default(FREE)
+  dailyTasksCreatedCount Int                @default(0)
+  lastTaskCreatedAt      DateTime?
+  currentPeriodEnd       DateTime?
+  accounts               Account[]
+  orders                 Order[]
+  payments               Payment[]
+  pointTransactions      PointTransaction[]
+  sessions               Session[]
+  supportTickets         SupportTicket[]
+  createdTasks           Task[]
+  taskCompletions        TaskCompletion[]
+  verificationCodes      VerificationCode[]
+}
+
+model RewardCampaign {
+  id                String             @id @default(cuid())
+  name              String             @unique
+  isActive          Boolean            @default(true)
+  title             String
+  description       String?
+  claimedCount      Int                @default(0)
+  maxLimit          Int                @default(1000)
+  rewardAmount      Int
+  rewardType        RewardType         @default(POINTS)
+  requiresNewUser   Boolean            @default(false)
+  maxAccountAgeDays Int?
+  startDate         DateTime?
+  endDate           DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  claims            PointTransaction[]
+}
+
+model PointTransaction {
+  id               String            @id @default(cuid())
+  userId           String
+  amount           Int
+  type             TransactionType
+  source           TransactionSource
+  createdAt        DateTime          @default(now())
+  rewardCampaignId String?
+  taskCompletionId String?           @unique
+  rewardCampaign   RewardCampaign?   @relation(fields: [rewardCampaignId], references: [id])
+  taskCompletion   TaskCompletion?   @relation(fields: [taskCompletionId], references: [id])
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id                 String           @id @default(cuid())
+  title              String
+  description        String?
+  quantity           Int
+  amount             Int
+  platform           TaskPlatform
+  userId             String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  allowsMultiAccount Boolean          @default(false)
+  link               String
+  expiresAt          DateTime?        @default(now())
+  creator            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions        TaskCompletion[]
+}
+
+model TaskCompletion {
+  id              String               @id @default(cuid())
+  userId          String
+  taskId          String
+  completionProof String
+  status          TaskCompletionStatus @default(PENDING)
+  createdAt       DateTime             @default(now())
+  pointReward     PointTransaction?
+  task            Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, taskId, completionProof])
+}
+
+model Service {
+  id           String       @id @default(cuid())
+  code         String       @unique
+  name         String
+  platform     TaskPlatform
+  pricePerUnit Int
+  minQuantity  Int
+  maxQuantity  Int
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  orders       Order[]
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  serviceId         String
+  quantity          Int
+  data              String?
+  link              String
+  totalPrice        Int
+  status            OrderStatus @default(PENDING)
+  deliveredQuantity Int         @default(0)
+  userId            String
+  paymentId         String      @unique
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  payment           Payment     @relation(fields: [paymentId], references: [id])
+  service           Service     @relation(fields: [serviceId], references: [id])
+  user              User        @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id                     String          @id @default(cuid())
+  userId                 String
+  provider               PaymentProvider
+  status                 PaymentStatus   @default(PENDING)
+  amountFiat             Float?
+  currencyFiat           String?
+  amountCrypto           Float?
+  currencyCrypto         String?
+  cryptoAddress          String?
+  providerRef            String?
+  createdAt              DateTime        @default(now())
+  confirmedAt            DateTime?
+  expirationEstimateDate DateTime?
+  network                String?
+  txHash                 String?         @unique
+  validUntil             DateTime?
+  order                  Order?
+  user                   User            @relation(fields: [userId], references: [id])
+}
+
+model SupportTicket {
+  id        String              @id @default(cuid())
+  userId    String?
+  email     String
+  subject   String
+  message   String
+  status    SupportTicketStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  user      User?               @relation(fields: [userId], references: [id])
+}
 
 enum Role {
   USER
@@ -23,10 +223,10 @@ enum TransactionSource {
   CAMPAIGN
   DAILY_REWARD
   TASK_COMPLETION
-  TASK_FUNDING
   PURCHASE
   ADMIN_ADJUST
   REFERRAL_BONUS
+  TASK_FUNDING
 }
 
 enum RewardType {
@@ -48,9 +248,9 @@ enum PlanType {
 }
 
 enum TaskCompletionStatus {
-  PENDING // User submitted the completion proof
-  VERIFIED // System/Admin confirmed the completion and rewarded points
-  REJECTED // Completion proof was invalid
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 enum OrderStatus {
@@ -86,268 +286,4 @@ enum SupportTicketStatus {
 
 enum VerificationCodeReasons {
   EMAIL_VERIFICATION
-}
-
-// --- Authentication Models (Standard) ---
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String?
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model VerificationCode {
-  id          String                  @id @default(cuid())
-  reason      VerificationCodeReasons @default(EMAIL_VERIFICATION)
-  code        Int
-  codeExpires DateTime
-  email       String
-  user        User                    @relation(fields: [email], references: [email], onDelete: Cascade)
-  createdAt   DateTime                @default(now())
-}
-
-// --- Core User Model ---
-
-model User {
-  id            String    @id @default(cuid())
-  role          Role      @default(USER)
-  email         String?   @unique
-  username      String?   @unique
-  firstname     String?
-  lastname      String?
-  name          String?
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  bio           String?   @db.Text
-
-  plan             PlanType  @default(FREE)
-  currentPeriodEnd DateTime?
-
-  accounts          Account[]
-  sessions          Session[]
-  verificationCodes VerificationCode[]
-
-  points            Int                @default(0)
-  pointTransactions PointTransaction[]
-
-  // Task relations
-  createdTasks    Task[] // Tasks created by this user
-  taskCompletions TaskCompletion[] // Tasks completed by this user
-
-  orders Order[]
-
-  dailyTasksCreatedCount Int       @default(0)
-  lastTaskCreatedAt      DateTime?
-
-  currentStreak       Int       @default(0)
-  lastDailyRewardDate DateTime?
-  payments            Payment[]
-
-  supportTickets SupportTicket[]
-}
-
-// --- Points & Rewards ---
-
-model RewardCampaign {
-  id       String  @id @default(cuid())
-  name     String  @unique
-  isActive Boolean @default(true)
-
-  title       String
-  description String?
-
-  claimedCount Int @default(0)
-  maxLimit     Int @default(1000)
-
-  rewardAmount Int
-  rewardType   RewardType @default(POINTS)
-
-  requiresNewUser   Boolean @default(false)
-  maxAccountAgeDays Int?
-
-  startDate DateTime?
-  endDate   DateTime?
-
-  claims PointTransaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PointTransaction {
-  id     String            @id @default(cuid())
-  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  amount Int
-  type   TransactionType
-  source TransactionSource
-
-  rewardCampaign   RewardCampaign? @relation(fields: [rewardCampaignId], references: [id], onDelete: SetNull)
-  rewardCampaignId String?
-
-  // NEW: Link to the specific completion event that triggered the reward
-  taskCompletion   TaskCompletion? @relation(fields: [taskCompletionId], references: [id], onDelete: SetNull)
-  taskCompletionId String?         @unique // Ensures one reward per verified completion
-
-  createdAt DateTime @default(now())
-}
-
-// --- Task System ---
-
-model Task {
-  id String @id @default(cuid())
-
-  title       String
-  description String?
-  link        String
-  quantity    Int
-  amount      Int
-  platform    TaskPlatform
-
-  creator User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  String
-
-  completions TaskCompletion[]
-
-  allowsMultiAccount Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model TaskCompletion {
-  id String @id @default(cuid())
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String
-
-  completionProof String @db.Text
-
-  status TaskCompletionStatus @default(PENDING)
-
-  pointReward PointTransaction?
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, taskId, completionProof])
-}
-
-model Service {
-  id String @id @default(cuid())
-
-  code     String       @unique
-  name     String
-  platform TaskPlatform
-
-  pricePerUnit Int
-  minQuantity  Int
-  maxQuantity  Int
-
-  isActive Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  orders    Order[]
-}
-
-model Order {
-  id String @id @default(cuid())
-
-  serviceId String
-  service   Service @relation(fields: [serviceId], references: [id])
-
-  quantity Int
-  data     String?
-  link     String
-
-  totalPrice Int // snapshot price at time of order
-  status     OrderStatus @default(PENDING)
-
-  deliveredQuantity Int @default(0)
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  paymentId String  @unique
-  payment   Payment @relation(fields: [paymentId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Payment {
-  id String @id @default(cuid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  provider PaymentProvider
-  status   PaymentStatus   @default(PENDING)
-
-  amountFiat   Float? // USD / EUR (optional)
-  currencyFiat String? // USD, EUR
-
-  amountCrypto   Float?
-  currencyCrypto String?
-
-  order Order?
-
-  cryptoAddress String?
-  providerRef   String?
-  network       String?
-
-  expirationEstimateDate DateTime?
-  validUntil             DateTime?
-
-  txHash String? @unique
-
-  createdAt   DateTime  @default(now())
-  confirmedAt DateTime?
-}
-
-model SupportTicket {
-  id     String  @id @default(cuid())
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
-
-  email   String
-  subject String
-  message String @db.Text
-
-  status SupportTicketStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }

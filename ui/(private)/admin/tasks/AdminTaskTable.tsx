@@ -57,9 +57,14 @@ export default function AdminTaskTable({ tasks, onDelete }: AdminTaskTableProps)
                     {getPlatformIcon(task.platform)}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-foreground tracking-tight underline decoration-secondary/30 underline-offset-2 truncate max-w-[200px]">
-                        {task.title}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-foreground tracking-tight underline decoration-secondary/30 underline-offset-2 truncate max-w-[200px]">
+                          {task.title}
+                      </span>
+                      {task.expiresAt && new Date(task.expiresAt) < new Date() && (
+                        <Badge variant="destructive" className="text-[8px] font-black h-3.5 px-1 py-0 uppercase">Expired</Badge>
+                      )}
+                    </div>
                     <span className="text-[10px] text-muted-foreground font-bold opacity-60">
                         by @{task.creator.username || "unknown"}
                     </span>

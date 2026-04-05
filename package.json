@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test:e2e": "playwright test",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma migrate deploy && next build"
+    "vercel-build": "prisma migrate deploy && npx tsx scripts/migrate-tasks-expiry.ts && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
