@@ -275,7 +275,6 @@ enum PaymentProvider {
   PAYPAL
   CRYPTO
   ADMIN
-  STARS
 }
 
 enum SupportTicketStatus {
